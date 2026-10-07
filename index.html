@@ -256,22 +256,24 @@
 
             <div id="loginFormObserver" class="space-y-4">
                 <div>
-                    <label class="text-sm font-medium text-gray-700 mb-1 block">Email</label>
+                    <label class="text-sm font-medium text-gray-700 mb-1 block">Nama Observer</label>
                     <div class="relative">
-                        <i class="fas fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                        <input type="email" id="loginEmail" value="kepsek@smpn1maiwa.sch.id" class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm" placeholder="email@sekolah.id">
+                        <i class="fas fa-user-tie absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                        <input type="text" id="loginNamaObserver" class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm" placeholder="Nama Kepala Sekolah / Observer">
                     </div>
+                    <p class="text-xs text-gray-400 mt-1"><i class="fas fa-info-circle"></i> Masukkan nama yang terdaftar sebagai observer</p>
                 </div>
                 <div>
                     <label class="text-sm font-medium text-gray-700 mb-1 block">Password</label>
                     <div class="relative">
                         <i class="fas fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                        <input type="password" id="loginPassword" value="admin123" class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm" placeholder="••••••••">
+                        <input type="password" id="loginPassword" class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm" placeholder="••••••••">
                     </div>
                 </div>
                 <button onclick="handleLoginObserver()" class="btn-primary w-full text-white py-3 rounded-xl text-sm font-semibold">
                     <i class="fas fa-sign-in-alt mr-2"></i> Masuk sebagai Observer
                 </button>
+                <p class="text-xs text-gray-400 text-center"><i class="fas fa-key"></i> Login pertama: nama & password default</p>
             </div>
 
             <div id="loginFormGuru" class="space-y-4 hidden">
@@ -403,6 +405,9 @@
                         </button>
                         <button onclick="switchMainMenu('rekap')" class="bg-gradient-to-r from-blue-50 to-white border border-blue-200 hover:border-blue-400 text-blue-700 p-4 rounded-xl text-sm font-semibold text-left transition">
                             <i class="fas fa-list mr-2"></i> Lihat Rekap Supervisi
+                        </button>
+                        <button onclick="switchMainMenu('kredensial')" class="bg-gradient-to-r from-orange-50 to-white border border-orange-200 hover:border-orange-400 text-orange-700 p-4 rounded-xl text-sm font-semibold text-left transition md:col-span-2">
+                            <i class="fas fa-key mr-2"></i> Ganti Nama & Password
                         </button>
                     </div>
                 </div>
@@ -868,30 +873,30 @@
                 <h2 class="font-bold text-gray-800 text-lg mb-4">
                     <i class="fas fa-key text-blue-600 mr-2"></i>Pengaturan Kredensial Login
                 </h2>
-                <p class="text-xs text-gray-500 mb-4">Ubah email dan password yang digunakan untuk login sebagai Observer (Kepala Sekolah).</p>
+                <p class="text-xs text-gray-500 mb-4">Ubah nama dan password yang digunakan untuk login sebagai Observer (Kepala Sekolah).</p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     
                     <div class="card-blue p-5">
                         <div class="flex items-center gap-2 mb-4">
                             <div class="bg-blue-100 p-2 rounded-lg">
-                                <i class="fas fa-envelope text-blue-600"></i>
+                                <i class="fas fa-user-tie text-blue-600"></i>
                             </div>
                             <div>
-                                <h3 class="font-bold text-gray-800 text-sm">Edit Email Login</h3>
-                                <p class="text-xs text-gray-500">Email yang digunakan untuk login</p>
+                                <h3 class="font-bold text-gray-800 text-sm">Edit Nama Observer</h3>
+                                <p class="text-xs text-gray-500">Nama yang digunakan untuk login</p>
                             </div>
                         </div>
 
                         <div class="bg-blue-50/50 p-3 rounded-lg mb-3">
-                            <p class="text-xs text-gray-500 mb-1">Email Saat Ini:</p>
+                            <p class="text-xs text-gray-500 mb-1">Nama Saat Ini:</p>
                             <p class="font-semibold text-sm text-gray-800 break-all" id="currentEmail">-</p>
                         </div>
 
                         <form id="formEditEmail" onsubmit="saveNewEmail(event)" class="space-y-3">
                             <div>
-                                <label class="text-xs font-medium text-gray-600 mb-1 block">Email Baru *</label>
-                                <input type="email" id="newEmail" required class="w-full text-sm border border-blue-200 rounded-lg p-3" placeholder="email@sekolah.id">
+                                <label class="text-xs font-medium text-gray-600 mb-1 block">Nama Baru *</label>
+                                <input type="text" id="newEmail" required class="w-full text-sm border border-blue-200 rounded-lg p-3" placeholder="Nama Kepala Sekolah / Observer">
                             </div>
                             <div>
                                 <label class="text-xs font-medium text-gray-600 mb-1 block">Konfirmasi Password Anda *</label>
@@ -899,7 +904,7 @@
                                 <p class="text-xs text-gray-400 mt-1"><i class="fas fa-lock"></i> Untuk keamanan, masukkan password Anda saat ini</p>
                             </div>
                             <button type="submit" class="btn-primary w-full text-white py-3 rounded-xl text-sm font-semibold">
-                                <i class="fas fa-save mr-1"></i> Simpan Email Baru
+                                <i class="fas fa-save mr-1"></i> Simpan Nama Baru
                             </button>
                         </form>
                     </div>
@@ -1257,7 +1262,7 @@
         // 🔧 KONFIGURASI SUPABASE
         // ============================================================
         const SUPABASE_URL = 'https://qfpzvkavxaiuknvrawnj.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmcHp2a2F2eGFpdWtudnJhd25qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyNjM4MjQsImV4cCI6MjEwNjgzOTgyNH0.2DsViXO_m6HEKYmOsrCFGUGhTL4VUqDoXuQVfSXp7Pc'; // GANTI DENGAN KEY LENGKAP
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmcHp2a2F2eGFpdWtudnJhd25qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyNjM4MjQsImV4cCI6MjEwNjgzOTgyNH0.2DsViXO_m6HEKYmOsrCFGUGhTL4VUqDoXuQVfSXp7Pc';
         
         const { createClient } = supabase;
         const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -1270,6 +1275,15 @@
         let currentUser = null;
         let currentGuruList = [];
         let currentObserver = null;
+        
+        // Data observer default (dipakai kalau DB kosong)
+        const DEFAULT_OBSERVER = {
+            nama: 'Drs. H. Ahmad, M.Pd.',
+            nip: '19700101 199501 1 001',
+            sekolah: 'SMP Negeri 1 Maiwa',
+            email: '',
+            password: 'admin123'
+        };
         
         // ============================================================
         // UI HELPERS
@@ -1321,110 +1335,77 @@
         }
 
         // ============================================================
-        // HANDLE LOGIN OBSERVER — WITH FALLBACK
+        // HANDLE LOGIN OBSERVER — PAKAI NAMA
         // ============================================================
         async function handleLoginObserver() {
-            const email = document.getElementById('loginEmail').value.trim();
+            const namaInput = document.getElementById('loginNamaObserver').value.trim();
             const password = document.getElementById('loginPassword').value;
             
-            if (!email || !password) {
-                showToast('Email dan password harus diisi!', 'error');
+            if (!namaInput || !password) {
+                showToast('Nama dan password harus diisi!', 'error');
                 return;
             }
             
             showLoading();
             try {
-                // Coba query ke Supabase
                 const { data, error } = await _supabase
                     .from('observer')
                     .select('*');
                 
                 if (error) throw error;
                 
-                // Cari observer yang cocok
+                // Cari observer berdasarkan nama (case-insensitive)
                 let observer = null;
                 if (data && data.length > 0) {
                     observer = data.find(o => 
-                        (o.email && o.email.toLowerCase() === email.toLowerCase()) &&
+                        o.nama && 
+                        o.nama.toLowerCase().trim() === namaInput.toLowerCase().trim() &&
                         o.password === password
                     );
-                    
-                    // Kalau ada observer di DB tapi email/password-nya null,
-                    // cek apakah ini observer pertama dan cocokkan dengan default
-                    if (!observer && data.length > 0) {
-                        observer = data.find(o => 
-                            (!o.email || o.email === '') && 
-                            (!o.password || o.password === '') &&
-                            email === 'kepsek@smpn1maiwa.sch.id' && 
-                            password === 'admin123'
-                        );
-                        
-                        // Kalau ketemu, update otomatis dengan email & password default
-                        if (observer) {
-                            await _supabase
-                                .from('observer')
-                                .update({ email: email, password: password })
-                                .eq('id', observer.id);
-                            observer.email = email;
-                            observer.password = password;
-                        }
-                    }
                 }
                 
-                // FALLBACK: Kalau Supabase kosong / tidak ada yang cocok,
-                // cek kredensial default (untuk kasus pertama kali setup)
-                if (!observer && email === 'kepsek@smpn1maiwa.sch.id' && password === 'admin123') {
-                    // Coba insert observer default
-                    const { data: inserted, error: insertErr } = await _supabase
-                        .from('observer')
-                        .insert({
-                            nama: 'Drs. H. Ahmad, M.Pd.',
-                            nip: '19700101 199501 1 001',
-                            sekolah: 'SMP Negeri 1 Maiwa',
-                            email: 'kepsek@smpn1maiwa.sch.id',
-                            password: 'admin123'
-                        })
-                        .select()
-                        .single();
-                    
-                    if (!insertErr && inserted) {
-                        observer = inserted;
+                // FALLBACK: Kalau DB kosong atau tidak ada yang cocok,
+                // cek apakah ini login pertama dengan kredensial default
+                if (!observer && namaInput.toLowerCase().trim() === DEFAULT_OBSERVER.nama.toLowerCase().trim() && password === DEFAULT_OBSERVER.password) {
+                    // Coba insert observer default ke DB
+                    if (!data || data.length === 0) {
+                        const { data: inserted, error: insertErr } = await _supabase
+                            .from('observer')
+                            .insert(DEFAULT_OBSERVER)
+                            .select()
+                            .single();
+                        
+                        if (!insertErr && inserted) {
+                            observer = inserted;
+                        } else {
+                            observer = { id: 'local-default', ...DEFAULT_OBSERVER };
+                        }
                     } else {
-                        // Kalau insert gagal (misal RLS), tetap login dengan data lokal
-                        observer = {
-                            id: 'local-default',
-                            nama: 'Drs. H. Ahmad, M.Pd.',
-                            nip: '19700101 199501 1 001',
-                            sekolah: 'SMP Negeri 1 Maiwa',
-                            email: 'kepsek@smpn1maiwa.sch.id',
-                            password: 'admin123'
-                        };
+                        observer = { id: 'local-default', ...DEFAULT_OBSERVER };
                     }
                 }
                 
                 if (observer) {
-                    const auth = { email: observer.email, role: 'observer', loginAt: Date.now(), nama: observer.nama };
+                    const auth = { 
+                        nama: observer.nama, 
+                        role: 'observer', 
+                        loginAt: Date.now(),
+                        observerId: observer.id
+                    };
                     localStorage.setItem('supervisi_auth', JSON.stringify(auth));
                     currentUser = auth;
                     currentObserver = observer;
                     showMainApp('observer');
                 } else {
-                    showToast('Email atau password salah!', 'error');
+                    showToast('Nama atau password salah!', 'error');
                 }
             } catch (err) {
                 console.error('Login error:', err);
                 
                 // FALLBACK TERAKHIR: kalau Supabase error total, cek default
-                if (email === 'kepsek@smpn1maiwa.sch.id' && password === 'admin123') {
-                    const observer = {
-                        id: 'local-default',
-                        nama: 'Drs. H. Ahmad, M.Pd.',
-                        nip: '19700101 199501 1 001',
-                        sekolah: 'SMP Negeri 1 Maiwa',
-                        email: 'kepsek@smpn1maiwa.sch.id',
-                        password: 'admin123'
-                    };
-                    const auth = { email: observer.email, role: 'observer', loginAt: Date.now(), nama: observer.nama };
+                if (namaInput.toLowerCase().trim() === DEFAULT_OBSERVER.nama.toLowerCase().trim() && password === DEFAULT_OBSERVER.password) {
+                    const observer = { id: 'local-default', ...DEFAULT_OBSERVER };
+                    const auth = { nama: observer.nama, role: 'observer', loginAt: Date.now(), observerId: observer.id };
                     localStorage.setItem('supervisi_auth', JSON.stringify(auth));
                     currentUser = auth;
                     currentObserver = observer;
@@ -1532,7 +1513,7 @@
         }
 
         // ============================================================
-        // OBSERVER — WITH FALLBACK
+        // OBSERVER — PAKAI NAMA (bukan email)
         // ============================================================
         async function loadObserver() {
             try {
@@ -1542,16 +1523,9 @@
                     .limit(1)
                     .maybeSingle();
                 
-                // Kalau error karena kolom email/password belum ada, fallback
                 if (error && error.code !== 'PGRST116') {
                     console.warn('Query observer error, pakai fallback:', error.message);
-                    currentObserver = {
-                        nama: 'Drs. H. Ahmad, M.Pd.',
-                        nip: '19700101 199501 1 001',
-                        sekolah: 'SMP Negeri 1 Maiwa',
-                        email: 'kepsek@smpn1maiwa.sch.id',
-                        password: 'admin123'
-                    };
+                    currentObserver = { id: 'local-default', ...DEFAULT_OBSERVER };
                     renderObserverInfo();
                     renderKredensialInfo();
                     return;
@@ -1559,25 +1533,17 @@
                 
                 // Kalau belum ada data observer, buat default
                 if (!data) {
-                    const defaultObserver = {
-                        nama: 'Drs. H. Ahmad, M.Pd.',
-                        nip: '19700101 199501 1 001',
-                        sekolah: 'SMP Negeri 1 Maiwa',
-                        email: 'kepsek@smpn1maiwa.sch.id',
-                        password: 'admin123'
-                    };
                     const { data: inserted, error: insertErr } = await _supabase
                         .from('observer')
-                        .insert(defaultObserver)
+                        .insert(DEFAULT_OBSERVER)
                         .select()
                         .single();
                     
                     if (insertErr) {
                         console.warn('Insert observer gagal, pakai fallback:', insertErr.message);
-                        currentObserver = defaultObserver;
+                        currentObserver = { id: 'local-default', ...DEFAULT_OBSERVER };
                     } else {
-                        data = inserted;
-                        currentObserver = data;
+                        currentObserver = inserted;
                     }
                 } else {
                     currentObserver = data;
@@ -1587,13 +1553,7 @@
                 renderKredensialInfo();
             } catch (err) {
                 console.error('Error loading observer:', err);
-                currentObserver = {
-                    nama: 'Drs. H. Ahmad, M.Pd.',
-                    nip: '19700101 199501 1 001',
-                    sekolah: 'SMP Negeri 1 Maiwa',
-                    email: 'kepsek@smpn1maiwa.sch.id',
-                    password: 'admin123'
-                };
+                currentObserver = { id: 'local-default', ...DEFAULT_OBSERVER };
                 renderObserverInfo();
                 renderKredensialInfo();
             }
@@ -1621,7 +1581,11 @@
 
         function renderKredensialInfo() {
             if (!currentObserver) return;
-            document.getElementById('currentEmail').textContent = currentObserver.email || '-';
+            // Tampilkan nama observer (bukan email)
+            const namaEl = document.getElementById('currentEmail');
+            if (namaEl) {
+                namaEl.textContent = currentObserver.nama || '-';
+            }
             document.getElementById('currentPassword').textContent = currentObserver.password || '-';
         }
 
@@ -1649,7 +1613,7 @@
                     const { error } = await _supabase.from('observer').update(payload).eq('id', currentObserver.id);
                     if (error) throw error;
                 } else {
-                    const { error } = await _supabase.from('observer').insert(payload);
+                    const { error } = await _supabase.from('observer').insert({ ...payload, password: DEFAULT_OBSERVER.password });
                     if (error) throw error;
                 }
                 
@@ -1665,7 +1629,7 @@
         }
 
         // ============================================================
-        // EDIT EMAIL & PASSWORD OBSERVER
+        // EDIT NAMA & PASSWORD OBSERVER
         // ============================================================
         function toggleCurrentPassword() {
             const el = document.getElementById('currentPassword');
@@ -1689,7 +1653,7 @@
             e.preventDefault();
             if (!currentObserver) return;
             
-            const newEmail = document.getElementById('newEmail').value.trim();
+            const newNama = document.getElementById('newEmail').value.trim();
             const confirmPw = document.getElementById('confirmPwEmail').value;
             
             if (confirmPw !== currentObserver.password) {
@@ -1697,8 +1661,8 @@
                 return;
             }
             
-            if (newEmail === currentObserver.email) {
-                showToast('Email baru sama dengan email lama.', 'info');
+            if (newNama === currentObserver.nama) {
+                showToast('Nama baru sama dengan nama lama.', 'info');
                 return;
             }
             
@@ -1707,32 +1671,31 @@
                 if (currentObserver.id && currentObserver.id !== 'local-default') {
                     const { error } = await _supabase
                         .from('observer')
-                        .update({ email: newEmail })
+                        .update({ nama: newNama })
                         .eq('id', currentObserver.id);
                     if (error) throw error;
                 } else {
                     const { error } = await _supabase
                         .from('observer')
                         .insert({
-                            nama: currentObserver.nama,
+                            nama: newNama,
                             nip: currentObserver.nip,
                             sekolah: currentObserver.sekolah,
-                            email: newEmail,
                             password: currentObserver.password
                         });
                     if (error) throw error;
                 }
                 
-                currentObserver.email = newEmail;
+                currentObserver.nama = newNama;
                 const auth = JSON.parse(localStorage.getItem('supervisi_auth'));
-                if (auth) { auth.email = newEmail; localStorage.setItem('supervisi_auth', JSON.stringify(auth)); }
+                if (auth) { auth.nama = newNama; localStorage.setItem('supervisi_auth', JSON.stringify(auth)); }
                 
                 await loadObserver();
                 document.getElementById('formEditEmail').reset();
-                showToast('✅ Email berhasil diperbarui!', 'success');
+                showToast('✅ Nama observer berhasil diperbarui!', 'success');
             } catch (err) {
                 console.error(err);
-                showToast('Gagal menyimpan email: ' + err.message, 'error');
+                showToast('Gagal menyimpan nama: ' + err.message, 'error');
             } finally {
                 hideLoading();
             }
@@ -1776,7 +1739,6 @@
                             nama: currentObserver.nama,
                             nip: currentObserver.nip,
                             sekolah: currentObserver.sekolah,
-                            email: currentObserver.email,
                             password: newPw
                         });
                     if (error) throw error;
@@ -2124,7 +2086,6 @@
             document.getElementById('formC2').value = map['c2'] || '';
             document.getElementById('formC3').value = map['c3'] || '';
             
-            // Load semua indikator 1-49
             for (let i = 1; i <= 49; i++) {
                 const el = document.getElementById('obs_' + i);
                 if (el) el.value = map[String(i)] || '';
@@ -2173,7 +2134,6 @@
                 'pascaRef1': 'pascaRef1', 'pascaRef2': 'pascaRef2', 'pascaRef3': 'pascaRef3'
             };
             
-            // Semua 49 indikator observasi
             for (let i = 1; i <= 49; i++) {
                 fieldMap['obs_' + i] = String(i);
             }
