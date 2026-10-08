@@ -220,6 +220,65 @@
             to { transform: translateX(0); opacity: 1; }
         }
         
+        /* Read-only panel */
+        .readonly-panel {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 12px;
+            min-height: 60px;
+        }
+        .readonly-panel .value {
+            font-size: 13px;
+            color: #334155;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.5;
+        }
+        .readonly-panel .empty {
+            font-size: 12px;
+            color: #94a3b8;
+            font-style: italic;
+        }
+        
+        /* RTL Table */
+        .rtl-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .rtl-table th {
+            background: #eff6ff;
+            color: #1e40af;
+            font-weight: 700;
+            padding: 10px 8px;
+            text-align: left;
+            border: 1px solid #dbeafe;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .rtl-table td {
+            padding: 8px;
+            border: 1px solid #dbeafe;
+            vertical-align: top;
+        }
+        .rtl-table input,
+        .rtl-table select,
+        .rtl-table textarea {
+            width: 100%;
+            font-size: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 8px;
+            background: white;
+        }
+        .rtl-table textarea {
+            resize: vertical;
+            min-height: 40px;
+            font-family: inherit;
+        }
+        
         @media print {
             .no-print { display: none !important; }
             body { background: white; }
@@ -486,49 +545,99 @@
 
                     <!-- TAB PRA-OBSERVASI -->
                     <div id="content-pra" class="tab-content">
+                        <!-- FORM B: TELAAH MANDIRI GURU + TELAAH BERSAMA OBSERVER (BERDAMPINGAN) -->
                         <div class="card-blue p-5 mb-4">
                             <div class="flex items-center gap-2 mb-3">
                                 <span class="badge-blue">Form B</span>
                                 <h3 class="font-bold text-gray-800">Telaah Perencanaan (Modul Ajar/RPP)</h3>
                             </div>
-                            <p class="text-xs text-gray-500 mb-4">Lakukan telaah bersama pendidik baru secara dialogis.</p>
-                            <div class="space-y-3">
-                                <div class="border border-blue-100 rounded-xl p-4 bg-blue-50/30">
-                                    <p class="font-semibold text-sm text-blue-800 mb-2"><i class="fas fa-bullseye mr-1"></i> 1. Tujuan Pembelajaran</p>
-                                    <textarea id="formB1a" class="w-full text-sm border border-blue-200 rounded-lg p-3 bg-white" rows="2" placeholder="Catatan apresiasi kekuatan..."></textarea>
-                                    <textarea id="formB1b" class="w-full text-sm border border-blue-200 rounded-lg p-3 bg-white mt-2" rows="2" placeholder="Catatan pengayaan & diskusi suportif..."></textarea>
+                            <p class="text-xs text-gray-500 mb-4">Kiri: hasil telaah mandiri guru (read-only). Kanan: hasil telaah bersama observer (input).</p>
+                            
+                            <!-- Header 2 kolom -->
+                            <div class="grid grid-cols-2 gap-3 mb-3">
+                                <div class="bg-gradient-to-r from-blue-100 to-blue-50 border border-blue-300 rounded-lg p-3 text-center">
+                                    <p class="text-xs font-bold text-blue-800"><i class="fas fa-user-graduate mr-1"></i> TELAAH MANDIRI GURU</p>
+                                    <p class="text-[10px] text-blue-600 mt-0.5">(read-only)</p>
                                 </div>
-                                <div class="border border-blue-100 rounded-xl p-4 bg-blue-50/30">
-                                    <p class="font-semibold text-sm text-blue-800 mb-2"><i class="fas fa-route mr-1"></i> 2. Alur Pengalaman Belajar Mendalam</p>
-                                    <textarea id="formB2" class="w-full text-sm border border-blue-200 rounded-lg p-3 bg-white" rows="2" placeholder="Catatan apresiasi..."></textarea>
+                                <div class="bg-gradient-to-r from-green-100 to-green-50 border border-green-300 rounded-lg p-3 text-center">
+                                    <p class="text-xs font-bold text-green-800"><i class="fas fa-user-shield mr-1"></i> TELAAH BERSAMA OBSERVER</p>
+                                    <p class="text-[10px] text-green-600 mt-0.5">(input)</p>
                                 </div>
-                                <div class="border border-blue-100 rounded-xl p-4 bg-blue-50/30">
-                                    <p class="font-semibold text-sm text-blue-800 mb-2"><i class="fas fa-heart mr-1"></i> 3. Penerapan Prinsip Pembelajaran Mendalam</p>
-                                    <textarea id="formB3" class="w-full text-sm border border-blue-200 rounded-lg p-3 bg-white" rows="2" placeholder="Catatan apresiasi..."></textarea>
+                            </div>
+
+                            <!-- B1a: Tujuan Pembelajaran - Apresiasi -->
+                            <div class="border border-blue-100 rounded-xl p-4 bg-blue-50/30 mb-3">
+                                <p class="font-semibold text-sm text-blue-800 mb-2"><i class="fas fa-bullseye mr-1"></i> 1. Tujuan Pembelajaran — Apresiasi Kekuatan</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="readonly-panel">
+                                        <div class="value" id="view_b1a_guru"><span class="empty">Belum diisi oleh guru.</span></div>
+                                    </div>
+                                    <textarea id="formB1a" class="w-full text-sm border border-blue-200 rounded-lg p-3 bg-white" rows="3" placeholder="Catatan apresiasi kekuatan..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- B1b: Tujuan Pembelajaran - Pengayaan -->
+                            <div class="border border-blue-100 rounded-xl p-4 bg-blue-50/30 mb-3">
+                                <p class="font-semibold text-sm text-blue-800 mb-2"><i class="fas fa-bullseye mr-1"></i> 1b. Tujuan Pembelajaran — Pengayaan & Diskusi Suportif</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="readonly-panel">
+                                        <div class="value" id="view_b1b_guru"><span class="empty">Belum diisi oleh guru.</span></div>
+                                    </div>
+                                    <textarea id="formB1b" class="w-full text-sm border border-blue-200 rounded-lg p-3 bg-white" rows="3" placeholder="Catatan pengayaan & diskusi suportif..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- B2: Alur Pengalaman Belajar -->
+                            <div class="border border-blue-100 rounded-xl p-4 bg-blue-50/30 mb-3">
+                                <p class="font-semibold text-sm text-blue-800 mb-2"><i class="fas fa-route mr-1"></i> 2. Alur Pengalaman Belajar Mendalam</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="readonly-panel">
+                                        <div class="value" id="view_b2_guru"><span class="empty">Belum diisi oleh guru.</span></div>
+                                    </div>
+                                    <textarea id="formB2" class="w-full text-sm border border-blue-200 rounded-lg p-3 bg-white" rows="3" placeholder="Catatan apresiasi..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- B3: Prinsip Pembelajaran Mendalam -->
+                            <div class="border border-blue-100 rounded-xl p-4 bg-blue-50/30">
+                                <p class="font-semibold text-sm text-blue-800 mb-2"><i class="fas fa-heart mr-1"></i> 3. Penerapan Prinsip Pembelajaran Mendalam</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="readonly-panel">
+                                        <div class="value" id="view_b3_guru"><span class="empty">Belum diisi oleh guru.</span></div>
+                                    </div>
+                                    <textarea id="formB3" class="w-full text-sm border border-blue-200 rounded-lg p-3 bg-white" rows="3" placeholder="Catatan apresiasi..."></textarea>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- FORM C: HASIL WAWANCARA COACHING DARI GURU (READ-ONLY DI OBSERVER) -->
                         <div class="card-blue p-5">
                             <div class="flex items-center gap-2 mb-3">
                                 <span class="badge-blue">Form C</span>
-                                <h3 class="font-bold text-gray-800">Panduan Wawancara Coaching</h3>
+                                <h3 class="font-bold text-gray-800">Panduan Wawancara Coaching (Isian Guru)</h3>
                             </div>
-                            <div class="space-y-4">
+                            <p class="text-xs text-gray-500 mb-4">Jawaban guru atas pertanyaan wawancara coaching. Bersifat read-only di sisi observer.</p>
+                            <div class="space-y-3">
                                 <div class="border-l-4 border-blue-500 pl-4">
                                     <label class="text-sm font-semibold text-gray-800">1. Tujuan Supervisi</label>
                                     <p class="text-xs text-blue-600 italic mb-2">"Bagian mana dari proses mengajar yang paling ingin ditingkatkan?"</p>
-                                    <textarea id="formC1" class="w-full text-sm border border-blue-200 rounded-lg p-3" rows="2"></textarea>
+                                    <div class="readonly-panel">
+                                        <div class="value" id="view_c1"><span class="empty">Belum diisi oleh guru.</span></div>
+                                    </div>
                                 </div>
                                 <div class="border-l-4 border-blue-500 pl-4">
                                     <label class="text-sm font-semibold text-gray-800">2. Tujuan Pembelajaran</label>
                                     <p class="text-xs text-blue-600 italic mb-2">"Tujuan apa yang ingin dicapai murid hari ini?"</p>
-                                    <textarea id="formC2" class="w-full text-sm border border-blue-200 rounded-lg p-3" rows="2"></textarea>
+                                    <div class="readonly-panel">
+                                        <div class="value" id="view_c2"><span class="empty">Belum diisi oleh guru.</span></div>
+                                    </div>
                                 </div>
                                 <div class="border-l-4 border-blue-500 pl-4">
                                     <label class="text-sm font-semibold text-gray-800">3. Strategi / Model Pembelajaran</label>
                                     <p class="text-xs text-blue-600 italic mb-2">"Strategi apa yang dipilih? Mengapa?"</p>
-                                    <textarea id="formC3" class="w-full text-sm border border-blue-200 rounded-lg p-3" rows="2"></textarea>
+                                    <div class="readonly-panel">
+                                        <div class="value" id="view_c3"><span class="empty">Belum diisi oleh guru.</span></div>
+                                    </div>
                                 </div>
                             </div>
                             <button onclick="updateStatusSesi('observasi')" class="btn-primary mt-5 w-full text-white py-3 rounded-xl text-sm font-semibold">
@@ -811,22 +920,33 @@
                             </div>
                         </div>
 
+                        <!-- PANEL READ-ONLY: REFLEKSI GURU -->
                         <div class="card-blue p-5 mb-4">
-                            <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                <i class="fas fa-question-circle text-blue-600"></i> Pertanyaan Refleksi
-                            </h3>
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="badge-green">Read-only</span>
+                                <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                                    <i class="fas fa-question-circle text-green-600"></i> Pertanyaan Refleksi (Isian Guru)
+                                </h3>
+                            </div>
+                            <p class="text-xs text-gray-500 mb-4">Jawaban refleksi guru. Bersifat read-only di sisi observer.</p>
                             <div class="space-y-3">
-                                <div class="border-l-4 border-blue-400 pl-4">
+                                <div class="border-l-4 border-green-400 pl-4">
                                     <label class="text-sm text-gray-700">1. Bagaimana perasaan Bapak/Ibu setelah pembelajaran hari ini?</label>
-                                    <textarea id="pascaRef1" class="w-full text-sm border border-blue-200 rounded-lg p-3 mt-2" rows="1"></textarea>
+                                    <div class="readonly-panel mt-2">
+                                        <div class="value" id="view_pascaRef1"><span class="empty">Belum diisi oleh guru.</span></div>
+                                    </div>
                                 </div>
-                                <div class="border-l-4 border-blue-400 pl-4">
+                                <div class="border-l-4 border-green-400 pl-4">
                                     <label class="text-sm text-gray-700">2. Bagian mana yang paling berhasil membuat murid belajar mendalam?</label>
-                                    <textarea id="pascaRef2" class="w-full text-sm border border-blue-200 rounded-lg p-3 mt-2" rows="1"></textarea>
+                                    <div class="readonly-panel mt-2">
+                                        <div class="value" id="view_pascaRef2"><span class="empty">Belum diisi oleh guru.</span></div>
+                                    </div>
                                 </div>
-                                <div class="border-l-4 border-blue-400 pl-4">
+                                <div class="border-l-4 border-green-400 pl-4">
                                     <label class="text-sm text-gray-700">3. Perbaikan apa yang ingin diterapkan jika mengajar materi ini kembali?</label>
-                                    <textarea id="pascaRef3" class="w-full text-sm border border-blue-200 rounded-lg p-3 mt-2" rows="1"></textarea>
+                                    <div class="readonly-panel mt-2">
+                                        <div class="value" id="view_pascaRef3"><span class="empty">Belum diisi oleh guru.</span></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -997,17 +1117,24 @@
             </div>
         </header>
 
-        <main class="max-w-4xl mx-auto p-4 mb-24">
+        <main class="max-w-5xl mx-auto p-4 mb-24">
             
             <div class="flex border-b-2 border-blue-100 mb-5 no-print overflow-x-auto gap-1">
                 <button onclick="switchGuruMenu('identitas')" id="gmenu-identitas" class="px-5 py-3 text-sm tab-active whitespace-nowrap transition-all">
                     <i class="fas fa-id-card mr-1"></i> Identitas (Form A)
                 </button>
+                <button onclick="switchGuruMenu('pra')" id="gmenu-pra" class="px-5 py-3 text-sm tab-inactive whitespace-nowrap transition-all">
+                    <i class="fas fa-clipboard-list mr-1"></i> Pra-Observasi
+                </button>
+                <button onclick="switchGuruMenu('pasca')" id="gmenu-pasca" class="px-5 py-3 text-sm tab-inactive whitespace-nowrap transition-all">
+                    <i class="fas fa-comments mr-1"></i> Pasca-Observasi
+                </button>
                 <button onclick="switchGuruMenu('rtl')" id="gmenu-rtl" class="px-5 py-3 text-sm tab-inactive whitespace-nowrap transition-all">
-                    <i class="fas fa-tasks mr-1"></i> Rencana Tindak Lanjut
+                    <i class="fas fa-tasks mr-1"></i> RTL
                 </button>
             </div>
 
+            <!-- MENU IDENTITAS (FORM A) -->
             <div id="gcontent-identitas" class="gmenu-content">
                 <div class="card-blue p-5 mb-4">
                     <div class="flex items-center gap-2 mb-4">
@@ -1089,6 +1216,131 @@
                 </div>
             </div>
 
+            <!-- MENU PRA-OBSERVASI GURU (FORM B + C) -->
+            <div id="gcontent-pra" class="gmenu-content hidden">
+                <div class="card-blue p-5 mb-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="badge-blue">Form B</span>
+                        <h3 class="font-bold text-gray-800">Telaah Mandiri Perencanaan (Modul Ajar/RPP)</h3>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-4">Isi telaah mandiri Anda. Hasil akan ditampilkan berdampingan dengan telaah bersama observer.</p>
+
+                    <div class="space-y-3">
+                        <div class="border border-blue-100 rounded-xl p-4 bg-blue-50/30">
+                            <p class="font-semibold text-sm text-blue-800 mb-2"><i class="fas fa-bullseye mr-1"></i> 1. Tujuan Pembelajaran — Apresiasi Kekuatan</p>
+                            <textarea id="guruB1a" class="w-full text-sm border border-blue-200 rounded-lg p-3 bg-white" rows="3" placeholder="Tuliskan apresiasi kekuatan dari tujuan pembelajaran yang Anda susun..."></textarea>
+                        </div>
+                        <div class="border border-blue-100 rounded-xl p-4 bg-blue-50/30">
+                            <p class="font-semibold text-sm text-blue-800 mb-2"><i class="fas fa-bullseye mr-1"></i> 1b. Tujuan Pembelajaran — Pengayaan & Diskusi Suportif</p>
+                            <textarea id="guruB1b" class="w-full text-sm border border-blue-200 rounded-lg p-3 bg-white" rows="3" placeholder="Bagian mana dari tujuan pembelajaran yang ingin didiskusikan lebih lanjut?"></textarea>
+                        </div>
+                        <div class="border border-blue-100 rounded-xl p-4 bg-blue-50/30">
+                            <p class="font-semibold text-sm text-blue-800 mb-2"><i class="fas fa-route mr-1"></i> 2. Alur Pengalaman Belajar Mendalam</p>
+                            <textarea id="guruB2" class="w-full text-sm border border-blue-200 rounded-lg p-3 bg-white" rows="3" placeholder="Deskripsikan alur pengalaman belajar yang Anda rancang..."></textarea>
+                        </div>
+                        <div class="border border-blue-100 rounded-xl p-4 bg-blue-50/30">
+                            <p class="font-semibold text-sm text-blue-800 mb-2"><i class="fas fa-heart mr-1"></i> 3. Penerapan Prinsip Pembelajaran Mendalam</p>
+                            <textarea id="guruB3" class="w-full text-sm border border-blue-200 rounded-lg p-3 bg-white" rows="3" placeholder="Bagaimana Anda menerapkan prinsip Mindful, Meaningful, Joyful?"></textarea>
+                        </div>
+                    </div>
+                    <button onclick="saveFormBGuru()" class="btn-primary mt-4 w-full text-white py-3 rounded-xl text-sm font-semibold">
+                        <i class="fas fa-save mr-1"></i> Simpan Telaah Mandiri
+                    </button>
+                </div>
+
+                <!-- FORM C: PANDUAN WAWANCARA COACHING (DIISI GURU) -->
+                <div class="card-blue p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="badge-blue">Form C</span>
+                        <h3 class="font-bold text-gray-800">Panduan Wawancara Coaching</h3>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-4">Isi jawaban Anda atas pertanyaan wawancara coaching berikut.</p>
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <label class="text-sm font-semibold text-gray-800">1. Tujuan Supervisi</label>
+                            <p class="text-xs text-blue-600 italic mb-2">"Bagian mana dari proses mengajar yang paling ingin ditingkatkan?"</p>
+                            <textarea id="guruC1" class="w-full text-sm border border-blue-200 rounded-lg p-3" rows="2"></textarea>
+                        </div>
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <label class="text-sm font-semibold text-gray-800">2. Tujuan Pembelajaran</label>
+                            <p class="text-xs text-blue-600 italic mb-2">"Tujuan apa yang ingin dicapai murid hari ini?"</p>
+                            <textarea id="guruC2" class="w-full text-sm border border-blue-200 rounded-lg p-3" rows="2"></textarea>
+                        </div>
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <label class="text-sm font-semibold text-gray-800">3. Strategi / Model Pembelajaran</label>
+                            <p class="text-xs text-blue-600 italic mb-2">"Strategi apa yang dipilih? Mengapa?"</p>
+                            <textarea id="guruC3" class="w-full text-sm border border-blue-200 rounded-lg p-3" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <button onclick="saveFormCGuru()" class="btn-primary mt-4 w-full text-white py-3 rounded-xl text-sm font-semibold">
+                        <i class="fas fa-save mr-1"></i> Simpan Jawaban Wawancara
+                    </button>
+                </div>
+            </div>
+
+            <!-- MENU PASCA-OBSERVASI GURU -->
+            <div id="gcontent-pasca" class="gmenu-content hidden">
+                <!-- PANEL READ-ONLY: APRESIASI/FOKUS/TANTANGAN DARI OBSERVER -->
+                <div class="card-blue p-5 mb-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="badge-blue">Read-only</span>
+                        <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                            <i class="fas fa-user-shield text-blue-600"></i> Catatan dari Observer
+                        </h3>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-4">Rangkuman catatan faktual dari observer. Bersifat read-only.</p>
+                    <div class="space-y-3">
+                        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                            <label class="text-sm font-semibold text-green-800"><i class="fas fa-thumbs-up mr-1"></i> Apresiasi Praktik Baik</label>
+                            <div class="readonly-panel mt-2 bg-white">
+                                <div class="value" id="view_pascaApresiasi"><span class="empty">Belum diisi oleh observer.</span></div>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                            <label class="text-sm font-semibold text-blue-800"><i class="fas fa-comments mr-1"></i> Area Fokus Diskusi Coaching</label>
+                            <div class="readonly-panel mt-2 bg-white">
+                                <div class="value" id="view_pascaFokus"><span class="empty">Belum diisi oleh observer.</span></div>
+                            </div>
+                        </div>
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                            <label class="text-sm font-semibold text-red-800"><i class="fas fa-exclamation-triangle mr-1"></i> Tantangan / Kendala Faktual</label>
+                            <div class="readonly-panel mt-2 bg-white">
+                                <div class="value" id="view_pascaTantangan"><span class="empty">Belum diisi oleh observer.</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FORM REFLEKSI GURU (INPUT) -->
+                <div class="card-blue p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="badge-green">Isian Guru</span>
+                        <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                            <i class="fas fa-question-circle text-green-600"></i> Pertanyaan Refleksi
+                        </h3>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-4">Refleksi Anda setelah pembelajaran. Hasil akan ditampilkan ke observer.</p>
+                    <div class="space-y-3">
+                        <div class="border-l-4 border-green-400 pl-4">
+                            <label class="text-sm text-gray-700">1. Bagaimana perasaan Bapak/Ibu setelah pembelajaran hari ini?</label>
+                            <textarea id="guruRef1" class="w-full text-sm border border-blue-200 rounded-lg p-3 mt-2" rows="2"></textarea>
+                        </div>
+                        <div class="border-l-4 border-green-400 pl-4">
+                            <label class="text-sm text-gray-700">2. Bagian mana yang paling berhasil membuat murid belajar mendalam?</label>
+                            <textarea id="guruRef2" class="w-full text-sm border border-blue-200 rounded-lg p-3 mt-2" rows="2"></textarea>
+                        </div>
+                        <div class="border-l-4 border-green-400 pl-4">
+                            <label class="text-sm text-gray-700">3. Perbaikan apa yang ingin diterapkan jika mengajar materi ini kembali?</label>
+                            <textarea id="guruRef3" class="w-full text-sm border border-blue-200 rounded-lg p-3 mt-2" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <button onclick="saveRefleksiGuru()" class="btn-green mt-4 w-full text-white py-3 rounded-xl text-sm font-semibold">
+                        <i class="fas fa-save mr-1"></i> Simpan Refleksi
+                    </button>
+                </div>
+            </div>
+
+            <!-- MENU RTL (TABEL) -->
             <div id="gcontent-rtl" class="gmenu-content hidden">
                 <div class="card-blue p-5 mb-4">
                     <div class="flex items-center gap-2 mb-4">
@@ -1103,47 +1355,43 @@
                         <i class="fas fa-info-circle mr-1"></i> RTL diisi setelah sesi Pasca-Observasi selesai.
                     </div>
 
-                    <form id="formRTL" onsubmit="saveRTL(event)" class="space-y-3">
-                        <div>
-                            <label class="text-xs font-medium text-gray-600 mb-1 block">Area Pengembangan *</label>
-                            <textarea id="rtlArea" required class="w-full text-sm border border-blue-200 rounded-lg p-3" rows="2" placeholder="Contoh: Pemberian umpan balik yang lebih spesifik"></textarea>
-                        </div>
-                        <div>
-                            <label class="text-xs font-medium text-gray-600 mb-1 block">Bentuk Pendampingan *</label>
-                            <select id="rtlBentuk" required class="w-full text-sm border border-blue-200 rounded-lg p-3">
-                                <option value="">-- Pilih --</option>
-                                <option value="Coaching">Coaching</option>
-                                <option value="Mentoring">Mentoring</option>
-                                <option value="Modeling">Modeling</option>
-                                <option value="Pelatihan Mandiri">Pelatihan Mandiri</option>
-                                <option value="Observasi Rekan Sejawat">Observasi Rekan Sejawat</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs font-medium text-gray-600 mb-1 block">Aktivitas / Langkah Nyata *</label>
-                            <textarea id="rtlAktivitas" required class="w-full text-sm border border-blue-200 rounded-lg p-3" rows="2" placeholder="Contoh: Menerapkan teknik bertanya HOTS di 3 pertemuan berikutnya"></textarea>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-xs font-medium text-gray-600 mb-1 block">Lini Waktu & Target *</label>
-                                <input type="text" id="rtlWaktu" required class="w-full text-sm border border-blue-200 rounded-lg p-3" placeholder="Contoh: 2 minggu">
-                            </div>
-                            <div>
-                                <label class="text-xs font-medium text-gray-600 mb-1 block">Ukuran Keberhasilan *</label>
-                                <input type="text" id="rtlUkuran" required class="w-full text-sm border border-blue-200 rounded-lg p-3" placeholder="Contoh: 80% murid aktif bertanya">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn-green w-full text-white py-3 rounded-xl text-sm font-semibold">
-                            <i class="fas fa-save mr-1"></i> Simpan RTL
-                        </button>
-                    </form>
-                </div>
+                    <div class="overflow-x-auto">
+                        <table class="rtl-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;">No</th>
+                                    <th>Area Pengembangan</th>
+                                    <th>Bentuk Pendampingan</th>
+                                    <th>Aktivitas / Langkah Nyata</th>
+                                    <th>Lini Waktu & Target</th>
+                                    <th>Ukuran Keberhasilan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-center font-semibold">1</td>
+                                    <td><textarea id="rtlArea" rows="2" placeholder="Contoh: Pemberian umpan balik yang lebih spesifik"></textarea></td>
+                                    <td>
+                                        <select id="rtlBentuk">
+                                            <option value="">-- Pilih --</option>
+                                            <option value="Coaching">Coaching</option>
+                                            <option value="Mentoring">Mentoring</option>
+                                            <option value="Modeling">Modeling</option>
+                                            <option value="Pelatihan Mandiri">Pelatihan Mandiri</option>
+                                            <option value="Observasi Rekan Sejawat">Observasi Rekan Sejawat</option>
+                                        </select>
+                                    </td>
+                                    <td><textarea id="rtlAktivitas" rows="2" placeholder="Contoh: Menerapkan teknik bertanya HOTS di 3 pertemuan berikutnya"></textarea></td>
+                                    <td><textarea id="rtlWaktu" rows="2" placeholder="Contoh: 2 minggu"></textarea></td>
+                                    <td><textarea id="rtlUkuran" rows="2" placeholder="Contoh: 80% murid aktif bertanya"></textarea></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-                <div class="card-blue p-5">
-                    <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
-                        <i class="fas fa-list-check text-blue-600"></i> RTL Tersimpan
-                    </h3>
-                    <div id="rtlListGuru" class="space-y-3"></div>
+                    <button onclick="saveRTL(event)" class="btn-green mt-4 w-full text-white py-3 rounded-xl text-sm font-semibold">
+                        <i class="fas fa-save mr-1"></i> Simpan RTL
+                    </button>
                 </div>
             </div>
 
@@ -1334,9 +1582,6 @@
             document.getElementById('loginFormGuru').classList.toggle('hidden', role !== 'guru');
         }
 
-        // ============================================================
-        // HANDLE LOGIN OBSERVER — PAKAI NAMA
-        // ============================================================
         async function handleLoginObserver() {
             const namaInput = document.getElementById('loginNamaObserver').value.trim();
             const password = document.getElementById('loginPassword').value;
@@ -1354,7 +1599,6 @@
                 
                 if (error) throw error;
                 
-                // Cari observer berdasarkan nama (case-insensitive)
                 let observer = null;
                 if (data && data.length > 0) {
                     observer = data.find(o => 
@@ -1364,10 +1608,7 @@
                     );
                 }
                 
-                // FALLBACK: Kalau DB kosong atau tidak ada yang cocok,
-                // cek apakah ini login pertama dengan kredensial default
                 if (!observer && namaInput.toLowerCase().trim() === DEFAULT_OBSERVER.nama.toLowerCase().trim() && password === DEFAULT_OBSERVER.password) {
-                    // Coba insert observer default ke DB
                     if (!data || data.length === 0) {
                         const { data: inserted, error: insertErr } = await _supabase
                             .from('observer')
@@ -1402,7 +1643,6 @@
             } catch (err) {
                 console.error('Login error:', err);
                 
-                // FALLBACK TERAKHIR: kalau Supabase error total, cek default
                 if (namaInput.toLowerCase().trim() === DEFAULT_OBSERVER.nama.toLowerCase().trim() && password === DEFAULT_OBSERVER.password) {
                     const observer = { id: 'local-default', ...DEFAULT_OBSERVER };
                     const auth = { nama: observer.nama, role: 'observer', loginAt: Date.now(), observerId: observer.id };
@@ -1513,7 +1753,7 @@
         }
 
         // ============================================================
-        // OBSERVER — PAKAI NAMA (bukan email)
+        // OBSERVER — PAKAI NAMA
         // ============================================================
         async function loadObserver() {
             try {
@@ -1531,7 +1771,6 @@
                     return;
                 }
                 
-                // Kalau belum ada data observer, buat default
                 if (!data) {
                     const { data: inserted, error: insertErr } = await _supabase
                         .from('observer')
@@ -1581,7 +1820,6 @@
 
         function renderKredensialInfo() {
             if (!currentObserver) return;
-            // Tampilkan nama observer (bukan email)
             const namaEl = document.getElementById('currentEmail');
             if (namaEl) {
                 namaEl.textContent = currentObserver.nama || '-';
@@ -2078,25 +2316,83 @@
             const map = {};
             (data || []).forEach(row => { map[row.indikator_id] = row.catatan; });
             
-            document.getElementById('formB1a').value = map['b1a'] || '';
-            document.getElementById('formB1b').value = map['b1b'] || '';
-            document.getElementById('formB2').value = map['b2'] || '';
-            document.getElementById('formB3').value = map['b3'] || '';
-            document.getElementById('formC1').value = map['c1'] || '';
-            document.getElementById('formC2').value = map['c2'] || '';
-            document.getElementById('formC3').value = map['c3'] || '';
+            // Versi OBSERVER (input)
+            document.getElementById('formB1a').value = map['b1a_obs'] || '';
+            document.getElementById('formB1b').value = map['b1b_obs'] || '';
+            document.getElementById('formB2').value = map['b2_obs'] || '';
+            document.getElementById('formB3').value = map['b3_obs'] || '';
             
+            // Versi GURU (read-only)
+            setReadonlyValue('view_b1a_guru', map['b1a_guru']);
+            setReadonlyValue('view_b1b_guru', map['b1b_guru']);
+            setReadonlyValue('view_b2_guru', map['b2_guru']);
+            setReadonlyValue('view_b3_guru', map['b3_guru']);
+            
+            // Form C (isian guru, read-only di observer)
+            setReadonlyValue('view_c1', map['c1']);
+            setReadonlyValue('view_c2', map['c2']);
+            setReadonlyValue('view_c3', map['c3']);
+            
+            // 49 indikator observasi
             for (let i = 1; i <= 49; i++) {
                 const el = document.getElementById('obs_' + i);
                 if (el) el.value = map[String(i)] || '';
             }
             
+            // Pasca observer (input)
             document.getElementById('pascaApresiasi').value = map['pascaApresiasi'] || '';
             document.getElementById('pascaFokus').value = map['pascaFokus'] || '';
             document.getElementById('pascaTantangan').value = map['pascaTantangan'] || '';
-            document.getElementById('pascaRef1').value = map['pascaRef1'] || '';
-            document.getElementById('pascaRef2').value = map['pascaRef2'] || '';
-            document.getElementById('pascaRef3').value = map['pascaRef3'] || '';
+            
+            // Refleksi guru (read-only di observer)
+            setReadonlyValue('view_pascaRef1', map['pascaRef1']);
+            setReadonlyValue('view_pascaRef2', map['pascaRef2']);
+            setReadonlyValue('view_pascaRef3', map['pascaRef3']);
+        }
+
+        function setReadonlyValue(elId, value) {
+            const el = document.getElementById(elId);
+            if (!el) return;
+            if (value && value.trim()) {
+                el.innerHTML = escapeHtml(value);
+            } else {
+                el.innerHTML = '<span class="empty">Belum diisi.</span>';
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;')
+                .replace(/\n/g, '<br>');
+        }
+
+        // Simpan ke tabel observasi dengan key prefix tertentu
+        async function saveObsField(guruId, key, value) {
+            try {
+                const { data: existing } = await _supabase
+                    .from('observasi')
+                    .select('id')
+                    .eq('guru_id', guruId)
+                    .eq('indikator_id', key)
+                    .maybeSingle();
+                
+                if (existing) {
+                    await _supabase.from('observasi').update({ catatan: value }).eq('id', existing.id);
+                } else if (value) {
+                    await _supabase.from('observasi').insert({
+                        guru_id: guruId,
+                        indikator_id: key,
+                        catatan: value
+                    });
+                }
+            } catch (err) {
+                console.error('Save field error [' + key + ']:', err);
+            }
         }
 
         let saveTimeouts = {};
@@ -2104,34 +2400,15 @@
             if (!currentSesiId) return;
             clearTimeout(saveTimeouts[indikatorId]);
             saveTimeouts[indikatorId] = setTimeout(async () => {
-                try {
-                    const { data: existing } = await _supabase
-                        .from('observasi')
-                        .select('id')
-                        .eq('guru_id', currentSesiId)
-                        .eq('indikator_id', String(indikatorId))
-                        .maybeSingle();
-                    
-                    if (existing) {
-                        await _supabase.from('observasi').update({ catatan: value }).eq('id', existing.id);
-                    } else if (value) {
-                        await _supabase.from('observasi').insert({
-                            guru_id: currentSesiId,
-                            indikator_id: String(indikatorId),
-                            catatan: value
-                        });
-                    }
-                } catch (err) { console.error('Auto-save error:', err); }
+                await saveObsField(currentSesiId, indikatorId, value);
             }, 800);
         }
 
         function attachAutoSave() {
             const fieldMap = {
-                'formB1a': 'b1a', 'formB1b': 'b1b', 'formB2': 'b2', 'formB3': 'b3',
-                'formC1': 'c1', 'formC2': 'c2', 'formC3': 'c3',
+                'formB1a': 'b1a_obs', 'formB1b': 'b1b_obs', 'formB2': 'b2_obs', 'formB3': 'b3_obs',
                 'pascaApresiasi': 'pascaApresiasi', 'pascaFokus': 'pascaFokus',
-                'pascaTantangan': 'pascaTantangan',
-                'pascaRef1': 'pascaRef1', 'pascaRef2': 'pascaRef2', 'pascaRef3': 'pascaRef3'
+                'pascaTantangan': 'pascaTantangan'
             };
             
             for (let i = 1; i <= 49; i++) {
@@ -2168,19 +2445,34 @@
                     return;
                 }
                 
-                container.innerHTML = data.map(r => `
-                    <div class="border border-blue-100 rounded-xl p-4 bg-blue-50/30 mb-3">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="font-semibold text-sm text-blue-800">${r.area}</p>
-                            <span class="badge-blue">${r.bentuk || '-'}</span>
-                        </div>
-                        <p class="text-xs text-gray-600 mb-2"><i class="fas fa-lightbulb text-blue-400 mr-1"></i> ${r.aktivitas || '-'}</p>
-                        <div class="grid grid-cols-2 gap-2 text-xs text-gray-500">
-                            <div><i class="fas fa-clock text-blue-400 mr-1"></i> ${r.waktu || '-'}</div>
-                            <div><i class="fas fa-check-circle text-green-400 mr-1"></i> ${r.ukuran || '-'}</div>
-                        </div>
+                // Tampilkan sebagai TABEL read-only
+                const r = data[0]; // 1 baris RTL
+                container.innerHTML = `
+                    <div class="overflow-x-auto">
+                        <table class="rtl-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;">No</th>
+                                    <th>Area Pengembangan</th>
+                                    <th>Bentuk Pendampingan</th>
+                                    <th>Aktivitas / Langkah Nyata</th>
+                                    <th>Lini Waktu & Target</th>
+                                    <th>Ukuran Keberhasilan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-center font-semibold">1</td>
+                                    <td><div class="value" style="font-size:12px;">${escapeHtml(r.area) || '<span class="empty">-</span>'}</div></td>
+                                    <td><span class="badge-blue">${escapeHtml(r.bentuk) || '-'}</span></td>
+                                    <td><div class="value" style="font-size:12px;">${escapeHtml(r.aktivitas) || '<span class="empty">-</span>'}</div></td>
+                                    <td><div class="value" style="font-size:12px;">${escapeHtml(r.waktu) || '<span class="empty">-</span>'}</div></td>
+                                    <td><div class="value" style="font-size:12px;">${escapeHtml(r.ukuran) || '<span class="empty">-</span>'}</div></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                `).join('');
+                `;
             } catch (err) {
                 console.error(err);
                 container.innerHTML = `<p class="text-xs text-red-500">Gagal memuat RTL.</p>`;
@@ -2291,6 +2583,8 @@
         // ============================================================
         // GURU APP
         // ============================================================
+        let currentGuruData = null;
+        
         async function initGuruApp() {
             const auth = JSON.parse(localStorage.getItem('supervisi_auth'));
             if (!auth || !auth.guruId) return;
@@ -2299,6 +2593,7 @@
             try {
                 const { data: guru, error } = await _supabase.from('guru').select('*').eq('id', auth.guruId).single();
                 if (error) throw error;
+                currentGuruData = guru;
                 
                 document.getElementById('headerGuruName').textContent = guru.nama;
                 const username = guru.username || generateUsername(guru.nama);
@@ -2315,9 +2610,12 @@
                 document.getElementById('faJadwal').value = fa.jadwal || '';
                 document.getElementById('faFokus').value = fa.fokus || 'Pembelajaran Mendalam (Deep Learning)';
                 
-                document.getElementById('faObserver').value = currentObserver ? currentObserver.nama : '-';
+                // Load observer info untuk field readonly
+                await loadObserverForGuru();
                 
                 renderGuruStatusInfo(guru);
+                await loadGuruFormBAndC(guru.id);
+                await loadRefleksiGuru(guru.id);
                 await renderRTLListGuru(guru.id);
             } catch (err) {
                 console.error(err);
@@ -2326,13 +2624,28 @@
                 hideLoading();
             }
         }
+        
+        async function loadObserverForGuru() {
+            try {
+                const { data } = await _supabase.from('observer').select('*').limit(1).maybeSingle();
+                if (data) {
+                    currentObserver = data;
+                    document.getElementById('faObserver').value = data.nama || '-';
+                } else {
+                    document.getElementById('faObserver').value = DEFAULT_OBSERVER.nama;
+                }
+            } catch (err) {
+                console.error('Load observer error:', err);
+                document.getElementById('faObserver').value = DEFAULT_OBSERVER.nama;
+            }
+        }
 
         function renderGuruStatusInfo(guru) {
             const status = getStatusLabel(guru.status);
             const container = document.getElementById('guruStatusInfo');
             
             const steps = [
-                { key: 'pra', label: 'Pra-Observasi', icon: 'fa-clipboard-list', desc: 'Isi Form A & telaah perencanaan' },
+                { key: 'pra', label: 'Pra-Observasi', icon: 'fa-clipboard-list', desc: 'Isi Form A, telaah mandiri (Form B) & wawancara (Form C)' },
                 { key: 'observasi', label: 'Observasi Kelas', icon: 'fa-eye', desc: 'Observer mencatat bukti faktual' },
                 { key: 'selesai', label: 'Pasca-Observasi', icon: 'fa-comments', desc: 'Refleksi & RTL' }
             ];
@@ -2361,6 +2674,38 @@
                     `).join('')}
                 </div>
             `;
+        }
+
+        async function loadGuruFormBAndC(guruId) {
+            const { data } = await _supabase.from('observasi').select('*').eq('guru_id', guruId);
+            const map = {};
+            (data || []).forEach(row => { map[row.indikator_id] = row.catatan; });
+            
+            // Form B versi guru
+            document.getElementById('guruB1a').value = map['b1a_guru'] || '';
+            document.getElementById('guruB1b').value = map['b1b_guru'] || '';
+            document.getElementById('guruB2').value = map['b2_guru'] || '';
+            document.getElementById('guruB3').value = map['b3_guru'] || '';
+            
+            // Form C versi guru
+            document.getElementById('guruC1').value = map['c1'] || '';
+            document.getElementById('guruC2').value = map['c2'] || '';
+            document.getElementById('guruC3').value = map['c3'] || '';
+            
+            // Panel read-only pasca (apresiasi/fokus/tantangan dari observer)
+            setReadonlyValue('view_pascaApresiasi', map['pascaApresiasi']);
+            setReadonlyValue('view_pascaFokus', map['pascaFokus']);
+            setReadonlyValue('view_pascaTantangan', map['pascaTantangan']);
+        }
+        
+        async function loadRefleksiGuru(guruId) {
+            const { data } = await _supabase.from('observasi').select('*').eq('guru_id', guruId);
+            const map = {};
+            (data || []).forEach(row => { map[row.indikator_id] = row.catatan; });
+            
+            document.getElementById('guruRef1').value = map['pascaRef1'] || '';
+            document.getElementById('guruRef2').value = map['pascaRef2'] || '';
+            document.getElementById('guruRef3').value = map['pascaRef3'] || '';
         }
 
         async function saveFormA(e) {
@@ -2396,8 +2741,63 @@
             }
         }
 
+        async function saveFormBGuru() {
+            const auth = JSON.parse(localStorage.getItem('supervisi_auth'));
+            if (!auth || !auth.guruId) return;
+            
+            showLoading();
+            try {
+                await saveObsField(auth.guruId, 'b1a_guru', document.getElementById('guruB1a').value);
+                await saveObsField(auth.guruId, 'b1b_guru', document.getElementById('guruB1b').value);
+                await saveObsField(auth.guruId, 'b2_guru', document.getElementById('guruB2').value);
+                await saveObsField(auth.guruId, 'b3_guru', document.getElementById('guruB3').value);
+                showToast('✅ Telaah Mandiri (Form B) berhasil disimpan!', 'success');
+            } catch (err) {
+                console.error(err);
+                showToast('Gagal menyimpan: ' + err.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function saveFormCGuru() {
+            const auth = JSON.parse(localStorage.getItem('supervisi_auth'));
+            if (!auth || !auth.guruId) return;
+            
+            showLoading();
+            try {
+                await saveObsField(auth.guruId, 'c1', document.getElementById('guruC1').value);
+                await saveObsField(auth.guruId, 'c2', document.getElementById('guruC2').value);
+                await saveObsField(auth.guruId, 'c3', document.getElementById('guruC3').value);
+                showToast('✅ Jawaban Wawancara (Form C) berhasil disimpan!', 'success');
+            } catch (err) {
+                console.error(err);
+                showToast('Gagal menyimpan: ' + err.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function saveRefleksiGuru() {
+            const auth = JSON.parse(localStorage.getItem('supervisi_auth'));
+            if (!auth || !auth.guruId) return;
+            
+            showLoading();
+            try {
+                await saveObsField(auth.guruId, 'pascaRef1', document.getElementById('guruRef1').value);
+                await saveObsField(auth.guruId, 'pascaRef2', document.getElementById('guruRef2').value);
+                await saveObsField(auth.guruId, 'pascaRef3', document.getElementById('guruRef3').value);
+                showToast('✅ Refleksi berhasil disimpan!', 'success');
+            } catch (err) {
+                console.error(err);
+                showToast('Gagal menyimpan: ' + err.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
         async function saveRTL(e) {
-            e.preventDefault();
+            if (e) e.preventDefault();
             const auth = JSON.parse(localStorage.getItem('supervisi_auth'));
             if (!auth || !auth.guruId) return;
             
@@ -2417,12 +2817,29 @@
                 ukuran: document.getElementById('rtlUkuran').value
             };
             
+            if (!rtl.area || !rtl.bentuk || !rtl.aktivitas || !rtl.waktu || !rtl.ukuran) {
+                showToast('Semua kolom RTL wajib diisi!', 'error');
+                return;
+            }
+            
             showLoading();
             try {
-                const { error } = await _supabase.from('rtl').insert(rtl);
-                if (error) throw error;
-                document.getElementById('formRTL').reset();
-                showToast('✅ Rencana Tindak Lanjut berhasil disimpan!', 'success');
+                // Cek apakah sudah ada RTL
+                const { data: existing } = await _supabase
+                    .from('rtl')
+                    .select('id')
+                    .eq('guru_id', auth.guruId)
+                    .maybeSingle();
+                
+                if (existing) {
+                    const { error } = await _supabase.from('rtl').update(rtl).eq('id', existing.id);
+                    if (error) throw error;
+                    showToast('✅ RTL berhasil diperbarui!', 'success');
+                } else {
+                    const { error } = await _supabase.from('rtl').insert(rtl);
+                    if (error) throw error;
+                    showToast('✅ RTL berhasil disimpan!', 'success');
+                }
                 await renderRTLListGuru(auth.guruId);
             } catch (err) {
                 console.error(err);
@@ -2433,7 +2850,6 @@
         }
 
         async function renderRTLListGuru(guruId) {
-            const container = document.getElementById('rtlListGuru');
             const infoBox = document.getElementById('rtlInfoGuru');
             
             const { data: guru } = await _supabase.from('guru').select('status').eq('id', guruId).single();
@@ -2446,35 +2862,26 @@
                 infoBox.innerHTML = '<i class="fas fa-check-circle mr-1"></i> Anda dapat mengisi RTL di bawah ini.';
             }
             
-            const { data, error } = await _supabase
+            // Load data RTL yang sudah ada (1 baris)
+            const { data } = await _supabase
                 .from('rtl')
                 .select('*')
                 .eq('guru_id', guruId)
-                .order('created_at', { ascending: false });
+                .maybeSingle();
             
-            if (error || !data || data.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-6">
-                        <i class="fas fa-inbox text-gray-300 text-3xl mb-2"></i>
-                        <p class="text-gray-500 text-xs">Belum ada RTL tersimpan.</p>
-                    </div>
-                `;
-                return;
+            if (data) {
+                document.getElementById('rtlArea').value = data.area || '';
+                document.getElementById('rtlBentuk').value = data.bentuk || '';
+                document.getElementById('rtlAktivitas').value = data.aktivitas || '';
+                document.getElementById('rtlWaktu').value = data.waktu || '';
+                document.getElementById('rtlUkuran').value = data.ukuran || '';
+            } else {
+                document.getElementById('rtlArea').value = '';
+                document.getElementById('rtlBentuk').value = '';
+                document.getElementById('rtlAktivitas').value = '';
+                document.getElementById('rtlWaktu').value = '';
+                document.getElementById('rtlUkuran').value = '';
             }
-            
-            container.innerHTML = data.map(r => `
-                <div class="border border-blue-100 rounded-xl p-4 bg-blue-50/30">
-                    <div class="flex justify-between items-start mb-2">
-                        <p class="font-semibold text-sm text-blue-800">${r.area}</p>
-                        <span class="badge-blue">${r.bentuk || '-'}</span>
-                    </div>
-                    <p class="text-xs text-gray-600 mb-2"><i class="fas fa-lightbulb text-blue-400 mr-1"></i> ${r.aktivitas || '-'}</p>
-                    <div class="grid grid-cols-2 gap-2 text-xs text-gray-500">
-                        <div><i class="fas fa-clock text-blue-400 mr-1"></i> ${r.waktu || '-'}</div>
-                        <div><i class="fas fa-check-circle text-green-400 mr-1"></i> ${r.ukuran || '-'}</div>
-                    </div>
-                </div>
-            `).join('');
         }
 
         function switchGuruMenu(menu) {
@@ -2487,6 +2894,16 @@
             });
             document.getElementById('gmenu-' + menu).classList.remove('tab-inactive');
             document.getElementById('gmenu-' + menu).classList.add('tab-active');
+            
+            // Refresh data setiap pindah menu
+            if (currentGuruData) {
+                if (menu === 'pra') loadGuruFormBAndC(currentGuruData.id);
+                if (menu === 'pasca') {
+                    loadRefleksiGuru(currentGuruData.id);
+                    loadGuruFormBAndC(currentGuruData.id); // refresh view observer
+                }
+                if (menu === 'rtl') renderRTLListGuru(currentGuruData.id);
+            }
         }
 
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
