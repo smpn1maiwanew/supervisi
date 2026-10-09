@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         body { 
             font-family: 'Inter', system-ui, sans-serif; 
@@ -70,6 +71,15 @@
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
         }
+        .btn-excel {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            transition: all 0.2s;
+        }
+        .btn-excel:hover {
+            background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+        }
         textarea:focus, input:focus, select:focus {
             outline: none;
             border-color: #3b82f6 !important;
@@ -86,14 +96,6 @@
         .badge-green {
             background: #d1fae5;
             color: #065f46;
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        .badge-yellow {
-            background: #fef3c7;
-            color: #92400e;
             padding: 4px 10px;
             border-radius: 999px;
             font-size: 11px;
@@ -220,7 +222,6 @@
             to { transform: translateX(0); opacity: 1; }
         }
         
-        /* Read-only panel */
         .readonly-panel {
             background: #f8fafc;
             border: 1px dashed #cbd5e1;
@@ -241,7 +242,6 @@
             font-style: italic;
         }
         
-        /* RTL Table */
         .rtl-table {
             width: 100%;
             border-collapse: collapse;
@@ -411,6 +411,19 @@
 
             <!-- DASHBOARD -->
             <div id="content-dashboard" class="menu-content">
+                <!-- INFO SEKOLAH -->
+                <div class="card-blue p-4 mb-5 bg-gradient-to-r from-blue-50 to-white">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-blue-100 p-3 rounded-xl">
+                            <i class="fas fa-school text-blue-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-sm">SMP Negeri 1 Maiwa</h3>
+                            <p class="text-xs text-gray-500">Aplikasi Supervisi Coaching — Khusus SMP Negeri 1 Maiwa</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
                     <div class="card-blue p-5">
                         <div class="flex items-center justify-between mb-2">
@@ -529,6 +542,17 @@
                             <span id="sesiStatusBadge" class="status-badge status-pra">Pra-Observasi</span>
                         </div>
                         <div id="formAInfo" class="grid grid-cols-2 gap-3 text-sm"></div>
+                        
+                        <!-- PANEL UPLOAD MODUL AJAR (OBSERVER) -->
+                        <div class="mt-4 pt-4 border-t border-blue-100">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fas fa-file-pdf text-red-500"></i>
+                                <h3 class="font-bold text-sm text-gray-800">Modul Ajar / RPP (Upload Guru)</h3>
+                            </div>
+                            <div id="modulAjarObserverPanel" class="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-4 text-center">
+                                <p class="text-xs text-gray-500 italic">Guru belum mengunggah Modul Ajar.</p>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="flex border-b-2 border-blue-100 mb-5 no-print overflow-x-auto gap-1">
@@ -1208,6 +1232,29 @@
                     </form>
                 </div>
 
+                <!-- PANEL UPLOAD MODUL AJAR (GURU) -->
+                <div class="card-blue p-5 mb-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="badge-blue">Form A - Lampiran</span>
+                        <h3 class="font-bold text-gray-800">Unggah Modul Ajar / RPP</h3>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-4">Unggah file Modul Ajar atau RPP Anda (PDF, DOC, DOCX). File ini akan ditampilkan kepada Observer saat sesi supervisi.</p>
+                    
+                    <div id="modulAjarGuruPanel" class="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-4 text-center mb-3">
+                        <p class="text-xs text-gray-500 italic">Belum ada file yang diunggah.</p>
+                    </div>
+
+                    <form id="formUploadModul" onsubmit="uploadModulAjar(event)" class="space-y-3">
+                        <div>
+                            <label class="text-xs font-medium text-gray-600 mb-1 block">Pilih File (PDF/DOC/DOCX) *</label>
+                            <input type="file" id="modulAjarFile" accept=".pdf,.doc,.docx" required class="w-full text-sm border border-blue-200 rounded-lg p-2 bg-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        </div>
+                        <button type="submit" class="btn-primary w-full text-white py-3 rounded-xl text-sm font-semibold">
+                            <i class="fas fa-upload mr-1"></i> Unggah Modul Ajar
+                        </button>
+                    </form>
+                </div>
+
                 <div class="card-blue p-5">
                     <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
                         <i class="fas fa-info-circle text-blue-600"></i> Status Sesi Supervisi
@@ -1443,6 +1490,12 @@
                     <p class="text-xs text-gray-400 mt-1"><i class="fas fa-info-circle"></i> PIN ini digunakan guru untuk login bersama username.</p>
                 </div>
 
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p class="text-xs text-blue-800">
+                        <i class="fas fa-info-circle mr-1"></i> Akun guru akan otomatis terdaftar sebagai <strong>SMP Negeri 1 Maiwa</strong>.
+                    </p>
+                </div>
+
                 <div class="flex gap-2 pt-2">
                     <button type="button" onclick="closeModal('guruModal')" class="flex-1 border border-gray-300 text-gray-600 py-3 rounded-xl text-sm font-semibold hover:bg-gray-50">Batal</button>
                     <button type="submit" class="btn-primary flex-1 text-white py-3 rounded-xl text-sm font-semibold"><i class="fas fa-save mr-1"></i> Simpan</button>
@@ -1516,15 +1569,20 @@
         const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         // ============================================================
+        // 🔒 UUID SEKOLAH — HANYA SMP NEGERI 1 MAIWA
+        // ============================================================
+        const SMPN1_MAIWA_ID = '7d2e8c03-cf2a-4faf-bbeb-b97699673900';
+        
+        // ============================================================
         // STATE MANAGEMENT
         // ============================================================
         let currentSesiId = null;
         let currentFilter = 'all';
         let currentUser = null;
         let currentGuruList = [];
+        let allGuruList = [];
         let currentObserver = null;
         
-        // Data observer default (dipakai kalau DB kosong)
         const DEFAULT_OBSERVER = {
             nama: 'Drs. H. Ahmad, M.Pd.',
             nip: '19700101 199501 1 001',
@@ -1668,7 +1726,13 @@
             const inputLower = input.toLowerCase();
             
             try {
-                const { data, error } = await _supabase.from('guru').select('*').eq('pin', pin);
+                // Filter: hanya guru dari SMPN 1 Maiwa (berdasarkan sekolah_id)
+                const { data, error } = await _supabase
+                    .from('guru')
+                    .select('*')
+                    .eq('pin', pin)
+                    .eq('sekolah_id', SMPN1_MAIWA_ID);
+                
                 if (error) throw error;
                 
                 const guru = (data || []).find(g => 
@@ -1730,16 +1794,23 @@
             await refreshGuruList();
         }
 
+        // ============================================================
+        // 🔒 AMBIL GURU — FILTER KETAT BERDASARKAN sekolah_id
+        // ============================================================
         async function refreshGuruList() {
             showLoading();
             try {
+                // FILTER DI LEVEL DATABASE: hanya guru dengan sekolah_id = SMPN 1 Maiwa
                 const { data, error } = await _supabase
                     .from('guru')
                     .select('*')
+                    .eq('sekolah_id', SMPN1_MAIWA_ID)
                     .order('created_at', { ascending: false });
                 
                 if (error) throw error;
-                currentGuruList = data || [];
+                allGuruList = data || [];
+                currentGuruList = allGuruList;
+                
                 renderGuruList();
                 renderRekapList();
                 updateStats();
@@ -1753,7 +1824,7 @@
         }
 
         // ============================================================
-        // OBSERVER — PAKAI NAMA
+        // OBSERVER
         // ============================================================
         async function loadObserver() {
             try {
@@ -2008,7 +2079,7 @@
             const form = document.getElementById('guruForm');
             
             if (id) {
-                const guru = currentGuruList.find(g => g.id === id);
+                const guru = allGuruList.find(g => g.id === id);
                 if (guru) {
                     title.innerHTML = '<i class="fas fa-user-edit text-blue-600 mr-2"></i>Edit Akun Guru';
                     document.getElementById('guruId').value = guru.id;
@@ -2036,7 +2107,7 @@
             
             if (!usernameBaru) { showToast('Username tidak dapat di-generate dari nama ini.', 'error'); return; }
             
-            const duplikatUsername = currentGuruList.find(g => g.username === usernameBaru && g.id !== id);
+            const duplikatUsername = allGuruList.find(g => g.username === usernameBaru && g.id !== id);
             if (duplikatUsername) {
                 showToast(`Username "${usernameBaru}" sudah dipakai oleh ${duplikatUsername.nama}`, 'error');
                 return;
@@ -2052,9 +2123,17 @@
                     if (error) throw error;
                     showToast('Data akun guru berhasil diperbarui!', 'success');
                 } else {
+                    // Insert dengan sekolah_id SMPN 1 Maiwa (otomatis)
                     const { data, error } = await _supabase
                         .from('guru')
-                        .insert({ nama: namaBaru, username: usernameBaru, pin: pinBaru, status: 'pra', form_a: {} })
+                        .insert({ 
+                            nama: namaBaru, 
+                            username: usernameBaru, 
+                            pin: pinBaru, 
+                            sekolah_id: SMPN1_MAIWA_ID,
+                            status: 'pra', 
+                            form_a: {} 
+                        })
                         .select()
                         .single();
                     if (error) throw error;
@@ -2074,7 +2153,7 @@
         }
 
         function showPinModal(guruId) {
-            const guru = currentGuruList.find(g => g.id === guruId);
+            const guru = allGuruList.find(g => g.id === guruId);
             if (!guru) return;
             document.getElementById('pinModalNama').textContent = guru.nama;
             document.getElementById('pinModalUsername').textContent = guru.username || generateUsername(guru.nama);
@@ -2105,7 +2184,7 @@
                 container.innerHTML = `
                     <div class="card-blue p-8 text-center">
                         <i class="fas fa-user-slash text-gray-300 text-4xl mb-3"></i>
-                        <p class="text-gray-500 text-sm">Belum ada akun guru. Klik "Tambah Akun" untuk memulai.</p>
+                        <p class="text-gray-500 text-sm">Belum ada akun guru untuk SMP Negeri 1 Maiwa. Klik "Tambah Akun" untuk memulai.</p>
                     </div>
                 `;
                 return;
@@ -2154,7 +2233,7 @@
         }
 
         // ============================================================
-        // REKAP
+        // REKAP & EXPORT EXCEL
         // ============================================================
         function filterRekap(status) {
             currentFilter = status;
@@ -2219,16 +2298,190 @@
                             <div><i class="fas fa-clock text-blue-400 mr-1"></i> ${fa.jadwal || '-'}</div>
                         </div>
                         ` : ''}
-                        <button onclick="openSesiFromRekap('${g.id}')" class="w-full btn-primary text-white py-2 rounded-lg text-xs font-semibold">
-                            <i class="fas fa-folder-open mr-1"></i> Buka Sesi Supervisi
-                        </button>
+                        <div class="flex gap-2">
+                            <button onclick="openSesiFromRekap('${g.id}')" class="flex-1 btn-primary text-white py-2 rounded-lg text-xs font-semibold">
+                                <i class="fas fa-folder-open mr-1"></i> Buka Sesi
+                            </button>
+                            <button onclick="exportToExcel('${g.id}')" class="flex-1 btn-excel text-white py-2 rounded-lg text-xs font-semibold">
+                                <i class="fas fa-file-excel mr-1"></i> Export Excel
+                            </button>
+                        </div>
                     </div>
                 `;
             }).join('');
         }
 
         // ============================================================
-        // SESI SUPERVISI
+        // EXPORT EXCEL LOGIC — MENGGUNAKAN SHEETJS (XLSX ASLI)
+        // ============================================================
+        async function exportToExcel(guruId) {
+            showLoading();
+            try {
+                const guru = allGuruList.find(g => g.id === guruId);
+                if (!guru) throw new Error("Guru tidak ditemukan");
+
+                const [resObs, resRtl] = await Promise.all([
+                    _supabase.from('observasi').select('*').eq('guru_id', guruId),
+                    _supabase.from('rtl').select('*').eq('guru_id', guruId).maybeSingle()
+                ]);
+
+                if (resObs.error) throw resObs.error;
+                if (resRtl.error) throw resRtl.error;
+
+                const map = {};
+                (resObs.data || []).forEach(row => { map[row.indikator_id] = row.catatan; });
+                const rtlData = resRtl.data || {};
+                const fa = guru.form_a || {};
+
+                const wb = XLSX.utils.book_new();
+
+                // ===== SHEET 1: FORM A =====
+                const sheet1Data = [
+                    ['FORM A: IDENTITAS & KESEPAKATAN', ''],
+                    ['Nama Pendidik', fa.nama || guru.nama],
+                    ['NIP', fa.nip || '-'],
+                    ['Mata Pelajaran', fa.mapel || '-'],
+                    ['Kelas / Semester', fa.kelas || '-'],
+                    ['Materi / Topik', fa.materi || '-'],
+                    ['Hari / Tanggal Pra-Obs', fa.tanggal || '-'],
+                    ['Alokasi Waktu', fa.alokasi || '-'],
+                    ['Jadwal Observasi Kelas', fa.jadwal || '-'],
+                    ['Observer / Kepala Sekolah', fa.observer || (currentObserver ? currentObserver.nama : '-')],
+                    ['Fokus Utama Coaching', fa.fokus || 'Pembelajaran Mendalam (Deep Learning)']
+                ];
+                const ws1 = XLSX.utils.aoa_to_sheet(sheet1Data);
+                ws1['!cols'] = [{ wch: 28 }, { wch: 50 }];
+                XLSX.utils.book_append_sheet(wb, ws1, 'Form A - Identitas');
+
+                // ===== SHEET 2: FORM B & C =====
+                const sheet2Data = [
+                    ['PRA-OBSERVASI: FORM B & FORM C', '', ''],
+                    ['FORM B: TELAAH PERENCANAAN (MODUL AJAR/RPP)', '', ''],
+                    ['Aspek', 'Telaah Mandiri Guru', 'Telaah Bersama Observer'],
+                    ['1. Tujuan Pembelajaran — Apresiasi Kekuatan', map['b1a_guru'] || '-', map['b1a_obs'] || '-'],
+                    ['1b. Tujuan Pembelajaran — Pengayaan & Diskusi Suportif', map['b1b_guru'] || '-', map['b1b_obs'] || '-'],
+                    ['2. Alur Pengalaman Belajar Mendalam', map['b2_guru'] || '-', map['b2_obs'] || '-'],
+                    ['3. Penerapan Prinsip Pembelajaran Mendalam', map['b3_guru'] || '-', map['b3_obs'] || '-'],
+                    ['', '', ''],
+                    ['FORM C: PANDUAN WAWANCARA COACHING (ISIAN GURU)', '', ''],
+                    ['1. Bagian mana dari proses mengajar yang paling ingin ditingkatkan?', map['c1'] || '-', ''],
+                    ['2. Tujuan apa yang ingin dicapai murid hari ini?', map['c2'] || '-', ''],
+                    ['3. Strategi apa yang dipilih? Mengapa?', map['c3'] || '-', '']
+                ];
+                const ws2 = XLSX.utils.aoa_to_sheet(sheet2Data);
+                ws2['!cols'] = [{ wch: 50 }, { wch: 45 }, { wch: 45 }];
+                XLSX.utils.book_append_sheet(wb, ws2, 'Form B-C - Pra Observasi');
+
+                // ===== SHEET 3: OBSERVASI =====
+                const indicators = [
+                    { no: 1, text: 'Menyampaikan salam dan mengondisikan fisik serta psikis murid dalam mengawali kegiatan pembelajaran.' },
+                    { no: 2, text: 'Meninjau kembali keyakinan/kesepakatan kelas yang telah disepakati bersama.' },
+                    { no: 3, text: 'Melaksanakan asesmen formatif awal untuk mengetahui kesiapan belajar murid (Mindful)' },
+                    { no: 4, text: 'Mengaitkan materi pembelajaran sebelumnya dengan materi yang akan dipelajari (Apersepsi).' },
+                    { no: 5, text: 'Menyampaikan Tujuan Pembelajaran yang ingin dicapai.' },
+                    { no: 6, text: 'Menjelaskan garis besar alur kegiatan pembelajaran yang akan dilakukan.' },
+                    { no: 7, text: 'Menyampaikan rencana asesmen dan kriteria ketercapaian tujuan pembelajaran.' },
+                    { no: 8, text: 'Menyampaikan manfaat bermakna dari materi yang dipelajari bagi kehidupan sehari-hari murid (Meaningful)' },
+                    { no: 9, text: 'Melakukan kegiatan penyegaran/pemicu semangat (Ice Breaking/KSE) yang menggembirakan (Joyful)' },
+                    { no: 10, text: 'Memfasilitasi suasana belajar yang mendorong kehadiran penuh dan fokus murid. (Mindful)' },
+                    { no: 11, text: 'Memberikan ruang bagi murid untuk mengekspresikan kesadaran emosional dan ide secara terbuka. (Mindful)' },
+                    { no: 12, text: 'Memerhatikan diferensiasi kebutuhan belajar dan kesiapan individu murid. (Mindful)' },
+                    { no: 13, text: 'Menghubungkan materi dengan pengalaman nyata, konteks lokal, atau isu aktual. (Meaningful)' },
+                    { no: 14, text: "Mendorong murid menemukan alasan 'mengapa' materi ini penting dipelajari. (Meaningful)" },
+                    { no: 15, text: 'Memfasilitasi kegiatan yang menghasilkan pemahaman konseptual yang mendalam. (Meaningful)' },
+                    { no: 16, text: 'Menciptakan iklim kelas yang positif, ramah, aman, dan bebas dari rasa takut salah. (Joyful)' },
+                    { no: 17, text: 'Menggunakan metode interaktif yang memicu antusiasme dan rasa ingin tahu murid. (Joyful)' },
+                    { no: 18, text: 'Memberikan apresiasi atas usaha, proses, dan keberanian murid berpartisipasi. (Joyful)' },
+                    { no: 19, text: 'Menyampaikan penjelasan konsep secara runtut, jelas, dan mudah dipahami. (Memahami)' },
+                    { no: 20, text: 'Menggunakan beragam sumber belajar (visual, auditori, kinestetik/digital). (Memahami)' },
+                    { no: 21, text: 'Memanfaatkan media/alat peraga konkret untuk memperjelas konsep abstrak. (Memahami)' },
+                    { no: 22, text: 'Mendorong murid aktif mengonstruksi pemahaman sendiri melalui eksplorasi. (Memahami)' },
+                    { no: 23, text: 'Mengajukan pertanyaan pemantik berpikir tingkat tinggi (HOTS). (Memahami)' },
+                    { no: 24, text: 'Memberikan kesempatan murid mengekspresikan pemahaman dalam pelbagai bentuk. (Memahami)' },
+                    { no: 25, text: 'Mengintegrasikan asesmen formatif proses untuk mengecek pemahaman murid. (Memahami)' },
+                    { no: 26, text: 'Memfasilitasi kegiatan praktik, simulasi, atau pemecahan masalah nyata. (Mengaplikasi)' },
+                    { no: 27, text: 'Mendorong murid menerapkan konsep pada situasi baru atau konteks lain. (Mengaplikasi)' },
+                    { no: 28, text: 'Membimbing murid menghasilkan karya, proyek, atau solusi kontekstual. (Mengaplikasi)' },
+                    { no: 29, text: 'Mendorong murid menilai kembali proses belajar dan strategi yang digunakan. (Merefleksi)' },
+                    { no: 30, text: 'Memfasilitasi murid mengidentifikasi tantangan dan cara menyelesaikannya. (Merefleksi)' },
+                    { no: 31, text: 'Mendorong murid merumuskan rencana tindak lanjut pengembangan diri. (Merefleksi)' },
+                    { no: 32, text: 'Menerapkan model inovatif (PBL, PjBL, Inquiry, STEM). (Praktik Pedagogik)' },
+                    { no: 33, text: 'Mengembangkan keterampilan 6C. (Praktik Pedagogik)' },
+                    { no: 34, text: 'Memberikan umpan balik konstruktif dan berkelanjutan saat proses belajar. (Praktik Pedagogik)' },
+                    { no: 35, text: 'Mendorong kolaborasi antar-murid dalam kelompok heterogen. (Kemitraan)' },
+                    { no: 36, text: 'Membangun relasi kemitraan saling menghargai antara guru dan murid. (Kemitraan)' },
+                    { no: 37, text: 'Mengelola tata ruang kelas yang mendukung interaksi aktif dan kolaborasi. (Lingkungan)' },
+                    { no: 38, text: 'Mendorong budaya saling mendukung, inklusif, dan menghargai perbedaan. (Lingkungan)' },
+                    { no: 39, text: 'Memanfaatkan lingkungan sekitar sekolah sebagai sumber belajar. (Lingkungan)' },
+                    { no: 40, text: 'Mengintegrasikan teknologi digital untuk eksplorasi dan kolaborasi. (Digital)' },
+                    { no: 41, text: 'Memanfaatkan media interaktif/aplikasi digital untuk memperkaya pengalaman belajar. (Digital)' },
+                    { no: 42, text: 'Memfasilitasi murid membuat rangkuman/kesimpulan poin utama pembelajaran secara bersama.' },
+                    { no: 43, text: 'Mendorong murid melakukan refleksi tentang perasaan dan keberhasilan belajar hari ini.' },
+                    { no: 44, text: 'Memberikan umpan balik positif atas dinamika dan pencapaian kelas secara umum.' },
+                    { no: 45, text: 'Melaksanakan asesmen formatif akhir untuk mengukur pencapaian tujuan pembelajaran.' },
+                    { no: 46, text: 'Memberikan tugas pengayaan atau literasi tematik yang relevan dan tidak memberatkan.' },
+                    { no: 47, text: 'Informasikan gambaran materi atau rencana kegiatan pada pertemuan berikutnya.' },
+                    { no: 48, text: 'Menutup pembelajaran dengan pesan moral/motivasi (Power Closing).' },
+                    { no: 49, text: 'Mengakhiri pembelajaran dengan doa dan salam penutup secara santun.' }
+                ];
+                const sheet3Data = [
+                    ['LEMBAR OBSERVASI PELAKSANAAN PEMBELAJARAN MENDALAM (49 INDIKATOR)', '', ''],
+                    ['Prinsip Non-Evaluatif: Catatan Faktual Deskriptif', '', ''],
+                    ['No', 'Indikator', 'Catatan Faktual']
+                ];
+                indicators.forEach(ind => {
+                    sheet3Data.push([ind.no, ind.text, map[String(ind.no)] || '-']);
+                });
+                const ws3 = XLSX.utils.aoa_to_sheet(sheet3Data);
+                ws3['!cols'] = [{ wch: 5 }, { wch: 65 }, { wch: 50 }];
+                XLSX.utils.book_append_sheet(wb, ws3, 'Observasi Kelas');
+
+                // ===== SHEET 4: PASCA & RTL =====
+                const sheet4Data = [
+                    ['PASCA-OBSERVASI: REFLEKSI & RENCANA TINDAK LANJUT (RTL)', ''],
+                    ['CATATAN OBSERVER', ''],
+                    ['Apresiasi Praktik Baik', map['pascaApresiasi'] || '-'],
+                    ['Area Fokus Diskusi Coaching', map['pascaFokus'] || '-'],
+                    ['Tantangan / Kendala Faktual', map['pascaTantangan'] || '-'],
+                    ['', ''],
+                    ['REFLEKSI GURU', ''],
+                    ['1. Bagaimana perasaan Bapak/Ibu setelah pembelajaran hari ini?', map['pascaRef1'] || '-'],
+                    ['2. Bagian mana yang paling berhasil membuat murid belajar mendalam?', map['pascaRef2'] || '-'],
+                    ['3. Perbaikan apa yang ingin diterapkan jika mengajar materi ini kembali?', map['pascaRef3'] || '-'],
+                    ['', ''],
+                    ['RENCANA TINDAK LANJUT (RTL)', ''],
+                    ['Area Pengembangan', rtlData.area || '-'],
+                    ['Bentuk Pendampingan', rtlData.bentuk || '-'],
+                    ['Aktivitas / Langkah Nyata', rtlData.aktivitas || '-'],
+                    ['Lini Waktu & Target', rtlData.waktu || '-'],
+                    ['Ukuran Keberhasilan', rtlData.ukuran || '-'],
+                    ['', ''],
+                    ['Pendidik yang Diobservasi,', 'Observer / Kepala Sekolah,'],
+                    ['', ''],
+                    ['', ''],
+                    [fa.nama || guru.nama, currentObserver ? currentObserver.nama : '-'],
+                    ['NIP. ' + (fa.nip || '-'), 'NIP. ' + (currentObserver ? currentObserver.nip : '-')]
+                ];
+                const ws4 = XLSX.utils.aoa_to_sheet(sheet4Data);
+                ws4['!cols'] = [{ wch: 55 }, { wch: 45 }];
+                XLSX.utils.book_append_sheet(wb, ws4, 'Pasca & RTL');
+
+                // Generate file .xlsx (format asli, tidak akan kena Protected View)
+                const fileName = `Supervisi_${guru.nama.replace(/\s+/g, '_')}.xlsx`;
+                XLSX.writeFile(wb, fileName, { bookType: 'xlsx', type: 'binary' });
+
+                showToast('✅ File Excel (4 Sheet) berhasil diunduh!', 'success');
+
+            } catch (err) {
+                console.error("Export error:", err);
+                showToast('Gagal export: ' + err.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ============================================================
+        // SESI SUPERVISI (Observer)
         // ============================================================
         function populateSelectGuru() {
             const select = document.getElementById('selectGuruSesi');
@@ -2248,7 +2501,7 @@
         }
 
         async function openSesi(id) {
-            const guru = currentGuruList.find(g => g.id === id);
+            const guru = allGuruList.find(g => g.id === id);
             if (!guru) return;
             
             currentSesiId = id;
@@ -2303,6 +2556,7 @@
             
             await loadFormBAndC(guru.id);
             await loadRTLViewObserver(guru.id);
+            await renderModulAjarObserver(guru.id);
             
             document.getElementById('sesiAktif').classList.remove('hidden');
             
@@ -2311,40 +2565,238 @@
             else switchTab('pra');
         }
 
+        // ============================================================
+        // MODUL AJAR OBSERVER (READ-ONLY)
+        // ============================================================
+        async function renderModulAjarObserver(guruId) {
+            const panel = document.getElementById('modulAjarObserverPanel');
+            if (!panel) return;
+
+            try {
+                const { data, error } = await _supabase
+                    .from('modul_ajar')
+                    .select('*')
+                    .eq('guru_id', guruId)
+                    .maybeSingle();
+
+                if (error && error.code !== 'PGRST116') throw error;
+
+                if (!data || !data.file_url) {
+                    panel.innerHTML = `<p class="text-xs text-gray-500 italic">Guru belum mengunggah Modul Ajar.</p>`;
+                    return;
+                }
+
+                const fileName = data.file_name || 'Modul_Ajar';
+                const fileUrl = data.file_url;
+
+                panel.innerHTML = `
+                    <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-red-100 p-2 rounded-lg">
+                                <i class="fas fa-file-pdf text-red-600 text-xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-sm font-semibold text-gray-800">${fileName}</p>
+                                <p class="text-xs text-gray-500">Diunggah: ${new Date(data.uploaded_at).toLocaleDateString('id-ID')}</p>
+                            </div>
+                        </div>
+                        <a href="${fileUrl}" target="_blank" class="btn-primary text-white px-4 py-2 rounded-lg text-xs font-semibold">
+                            <i class="fas fa-download mr-1"></i> Unduh
+                        </a>
+                    </div>
+                `;
+            } catch (err) {
+                console.error('Error render modul ajar:', err);
+                panel.innerHTML = `<p class="text-xs text-red-500">Gagal memuat Modul Ajar.</p>`;
+            }
+        }
+
+        // ============================================================
+        // UPLOAD MODUL AJAR (GURU)
+        // ============================================================
+        async function uploadModulAjar(e) {
+            e.preventDefault();
+            const auth = JSON.parse(localStorage.getItem('supervisi_auth'));
+            if (!auth || !auth.guruId) return;
+
+            const fileInput = document.getElementById('modulAjarFile');
+            const file = fileInput.files[0];
+            if (!file) { showToast('Pilih file terlebih dahulu!', 'error'); return; }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Ukuran file maksimal 5MB!', 'error');
+                return;
+            }
+
+            showLoading();
+            try {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${auth.guruId}_${Date.now()}.${fileExt}`;
+                const filePath = `modul_ajar/${fileName}`;
+
+                const { data: existing } = await _supabase
+                    .from('modul_ajar')
+                    .select('*')
+                    .eq('guru_id', auth.guruId)
+                    .maybeSingle();
+
+                if (existing && existing.file_path) {
+                    await _supabase.storage.from('modul_ajar').remove([existing.file_path]);
+                }
+
+                const { error: uploadError } = await _supabase.storage
+                    .from('modul_ajar')
+                    .upload(filePath, file, { upsert: true });
+
+                if (uploadError) throw uploadError;
+
+                const { data: urlData } = _supabase.storage
+                    .from('modul_ajar')
+                    .getPublicUrl(filePath);
+
+                const publicUrl = urlData.publicUrl;
+
+                const payload = {
+                    guru_id: auth.guruId,
+                    file_name: file.name,
+                    file_path: filePath,
+                    file_url: publicUrl,
+                    uploaded_at: new Date().toISOString()
+                };
+
+                if (existing) {
+                    const { error: updateError } = await _supabase
+                        .from('modul_ajar')
+                        .update(payload)
+                        .eq('id', existing.id);
+                    if (updateError) throw updateError;
+                } else {
+                    const { error: insertError } = await _supabase
+                        .from('modul_ajar')
+                        .insert(payload);
+                    if (insertError) throw insertError;
+                }
+
+                showToast('✅ Modul Ajar berhasil diunggah!', 'success');
+                fileInput.value = '';
+                await initGuruApp();
+            } catch (err) {
+                console.error('Upload error:', err);
+                showToast('Gagal mengunggah: ' + err.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function renderModulAjarGuru(guruId) {
+            const panel = document.getElementById('modulAjarGuruPanel');
+            if (!panel) return;
+
+            try {
+                const { data, error } = await _supabase
+                    .from('modul_ajar')
+                    .select('*')
+                    .eq('guru_id', guruId)
+                    .maybeSingle();
+
+                if (error && error.code !== 'PGRST116') throw error;
+
+                if (!data || !data.file_url) {
+                    panel.innerHTML = `<p class="text-xs text-gray-500 italic">Belum ada file yang diunggah.</p>`;
+                    return;
+                }
+
+                panel.innerHTML = `
+                    <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-red-100 p-2 rounded-lg">
+                                <i class="fas fa-file-pdf text-red-600 text-xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-sm font-semibold text-gray-800">${data.file_name}</p>
+                                <p class="text-xs text-gray-500">Diunggah: ${new Date(data.uploaded_at).toLocaleDateString('id-ID')}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="${data.file_url}" target="_blank" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                                <i class="fas fa-eye mr-1"></i> Lihat
+                            </a>
+                            <button onclick="hapusModulAjar('${data.id}')" class="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                                <i class="fas fa-trash mr-1"></i> Hapus
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                console.error('Error render modul ajar guru:', err);
+                panel.innerHTML = `<p class="text-xs text-red-500">Gagal memuat Modul Ajar.</p>`;
+            }
+        }
+
+        async function hapusModulAjar(id) {
+            if (!confirm('Yakin ingin menghapus Modul Ajar ini?')) return;
+            showLoading();
+            try {
+                const { data: fileData, error: fetchError } = await _supabase
+                    .from('modul_ajar')
+                    .select('file_path')
+                    .eq('id', id)
+                    .single();
+                
+                if (fetchError) throw fetchError;
+
+                if (fileData && fileData.file_path) {
+                    await _supabase.storage.from('modul_ajar').remove([fileData.file_path]);
+                }
+
+                const { error: deleteError } = await _supabase
+                    .from('modul_ajar')
+                    .delete()
+                    .eq('id', id);
+
+                if (deleteError) throw deleteError;
+
+                showToast('✅ Modul Ajar berhasil dihapus!', 'success');
+                await initGuruApp();
+            } catch (err) {
+                console.error('Delete error:', err);
+                showToast('Gagal menghapus: ' + err.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ============================================================
+        // FORM B & C (Observer & Guru)
+        // ============================================================
         async function loadFormBAndC(guruId) {
             const { data } = await _supabase.from('observasi').select('*').eq('guru_id', guruId);
             const map = {};
             (data || []).forEach(row => { map[row.indikator_id] = row.catatan; });
             
-            // Versi OBSERVER (input)
             document.getElementById('formB1a').value = map['b1a_obs'] || '';
             document.getElementById('formB1b').value = map['b1b_obs'] || '';
             document.getElementById('formB2').value = map['b2_obs'] || '';
             document.getElementById('formB3').value = map['b3_obs'] || '';
             
-            // Versi GURU (read-only)
             setReadonlyValue('view_b1a_guru', map['b1a_guru']);
             setReadonlyValue('view_b1b_guru', map['b1b_guru']);
             setReadonlyValue('view_b2_guru', map['b2_guru']);
             setReadonlyValue('view_b3_guru', map['b3_guru']);
             
-            // Form C (isian guru, read-only di observer)
             setReadonlyValue('view_c1', map['c1']);
             setReadonlyValue('view_c2', map['c2']);
             setReadonlyValue('view_c3', map['c3']);
             
-            // 49 indikator observasi
             for (let i = 1; i <= 49; i++) {
                 const el = document.getElementById('obs_' + i);
                 if (el) el.value = map[String(i)] || '';
             }
             
-            // Pasca observer (input)
             document.getElementById('pascaApresiasi').value = map['pascaApresiasi'] || '';
             document.getElementById('pascaFokus').value = map['pascaFokus'] || '';
             document.getElementById('pascaTantangan').value = map['pascaTantangan'] || '';
             
-            // Refleksi guru (read-only di observer)
             setReadonlyValue('view_pascaRef1', map['pascaRef1']);
             setReadonlyValue('view_pascaRef2', map['pascaRef2']);
             setReadonlyValue('view_pascaRef3', map['pascaRef3']);
@@ -2371,7 +2823,6 @@
                 .replace(/\n/g, '<br>');
         }
 
-        // Simpan ke tabel observasi dengan key prefix tertentu
         async function saveObsField(guruId, key, value) {
             try {
                 const { data: existing } = await _supabase
@@ -2445,8 +2896,7 @@
                     return;
                 }
                 
-                // Tampilkan sebagai TABEL read-only
-                const r = data[0]; // 1 baris RTL
+                const r = data[0];
                 container.innerHTML = `
                     <div class="overflow-x-auto">
                         <table class="rtl-table">
@@ -2482,7 +2932,7 @@
         async function updateStatusSesi(newStatus) {
             if (!currentSesiId) return;
             
-            const guru = currentGuruList.find(g => g.id === currentSesiId);
+            const guru = allGuruList.find(g => g.id === currentSesiId);
             if (newStatus === 'observasi') {
                 const fa = guru.form_a || {};
                 if (!fa.nama || !fa.mapel || !fa.kelas) {
@@ -2495,8 +2945,8 @@
                 const { error } = await _supabase.from('guru').update({ status: newStatus }).eq('id', currentSesiId);
                 if (error) throw error;
                 
-                const idx = currentGuruList.findIndex(g => g.id === currentSesiId);
-                if (idx >= 0) currentGuruList[idx].status = newStatus;
+                const idx = allGuruList.findIndex(g => g.id === currentSesiId);
+                if (idx >= 0) allGuruList[idx].status = newStatus;
                 
                 const status = getStatusLabel(newStatus);
                 const badge = document.getElementById('sesiStatusBadge');
@@ -2506,6 +2956,7 @@
                 if (newStatus === 'observasi') switchTab('observasi');
                 else if (newStatus === 'pasca') switchTab('pasca');
                 
+                renderGuruList();
                 renderRekapList();
                 updateStats();
                 showToast('Status sesi diperbarui.', 'success');
@@ -2547,7 +2998,7 @@
             document.getElementById('menu-' + menu).classList.add('tab-active');
             
             if (menu === 'rekap') renderRekapList();
-            if (menu === 'dashboard') updateStats();
+            if (menu === 'dashboard') { renderGuruList(); updateStats(); }
             if (menu === 'kredensial') renderKredensialInfo();
         }
 
@@ -2593,6 +3044,14 @@
             try {
                 const { data: guru, error } = await _supabase.from('guru').select('*').eq('id', auth.guruId).single();
                 if (error) throw error;
+                
+                // Keamanan tambahan: pastikan guru ini dari SMPN 1 Maiwa
+                if (guru.sekolah_id !== SMPN1_MAIWA_ID) {
+                    showToast('Akun ini bukan dari SMP Negeri 1 Maiwa.', 'error');
+                    handleLogout();
+                    return;
+                }
+                
                 currentGuruData = guru;
                 
                 document.getElementById('headerGuruName').textContent = guru.nama;
@@ -2610,13 +3069,13 @@
                 document.getElementById('faJadwal').value = fa.jadwal || '';
                 document.getElementById('faFokus').value = fa.fokus || 'Pembelajaran Mendalam (Deep Learning)';
                 
-                // Load observer info untuk field readonly
                 await loadObserverForGuru();
                 
                 renderGuruStatusInfo(guru);
                 await loadGuruFormBAndC(guru.id);
                 await loadRefleksiGuru(guru.id);
                 await renderRTLListGuru(guru.id);
+                await renderModulAjarGuru(guru.id);
             } catch (err) {
                 console.error(err);
                 showToast('Gagal memuat data: ' + err.message, 'error');
@@ -2681,18 +3140,15 @@
             const map = {};
             (data || []).forEach(row => { map[row.indikator_id] = row.catatan; });
             
-            // Form B versi guru
             document.getElementById('guruB1a').value = map['b1a_guru'] || '';
             document.getElementById('guruB1b').value = map['b1b_guru'] || '';
             document.getElementById('guruB2').value = map['b2_guru'] || '';
             document.getElementById('guruB3').value = map['b3_guru'] || '';
             
-            // Form C versi guru
             document.getElementById('guruC1').value = map['c1'] || '';
             document.getElementById('guruC2').value = map['c2'] || '';
             document.getElementById('guruC3').value = map['c3'] || '';
             
-            // Panel read-only pasca (apresiasi/fokus/tantangan dari observer)
             setReadonlyValue('view_pascaApresiasi', map['pascaApresiasi']);
             setReadonlyValue('view_pascaFokus', map['pascaFokus']);
             setReadonlyValue('view_pascaTantangan', map['pascaTantangan']);
@@ -2824,7 +3280,6 @@
             
             showLoading();
             try {
-                // Cek apakah sudah ada RTL
                 const { data: existing } = await _supabase
                     .from('rtl')
                     .select('id')
@@ -2862,7 +3317,6 @@
                 infoBox.innerHTML = '<i class="fas fa-check-circle mr-1"></i> Anda dapat mengisi RTL di bawah ini.';
             }
             
-            // Load data RTL yang sudah ada (1 baris)
             const { data } = await _supabase
                 .from('rtl')
                 .select('*')
@@ -2895,12 +3349,11 @@
             document.getElementById('gmenu-' + menu).classList.remove('tab-inactive');
             document.getElementById('gmenu-' + menu).classList.add('tab-active');
             
-            // Refresh data setiap pindah menu
             if (currentGuruData) {
                 if (menu === 'pra') loadGuruFormBAndC(currentGuruData.id);
                 if (menu === 'pasca') {
                     loadRefleksiGuru(currentGuruData.id);
-                    loadGuruFormBAndC(currentGuruData.id); // refresh view observer
+                    loadGuruFormBAndC(currentGuruData.id);
                 }
                 if (menu === 'rtl') renderRTLListGuru(currentGuruData.id);
             }
