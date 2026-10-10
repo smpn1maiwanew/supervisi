@@ -278,6 +278,75 @@
             min-height: 40px;
             font-family: inherit;
         }
+
+        /* ============ SPLIT VIEW PANEL (MODUL AJAR) ============ */
+        .split-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 35%;
+            min-width: 380px;
+            max-width: 560px;
+            height: 100vh;
+            background: white;
+            border-left: 2px solid #dbeafe;
+            box-shadow: -8px 0 24px rgba(37, 99, 235, 0.15);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 80;
+            display: flex;
+            flex-direction: column;
+        }
+        .split-panel.open { transform: translateX(0); }
+        .split-panel-header {
+            background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+            color: white;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            min-height: 52px;
+        }
+        .split-panel-body {
+            flex: 1;
+            overflow: hidden;
+            background: #f1f5f9;
+            position: relative;
+        }
+        .split-panel-body iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+        .split-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.35);
+            backdrop-filter: blur(1px);
+            display: none;
+            z-index: 75;
+        }
+        .split-overlay.active { display: block; }
+
+        /* Di layar lebar: geser main ke kiri saat panel terbuka */
+        @media (min-width: 1024px) {
+            body.split-open main {
+                margin-right: 35%;
+                transition: margin-right 0.3s ease;
+            }
+        }
+
+        /* Di HP (<1024px): panel full-screen, overlay tampil */
+        @media (max-width: 1023px) {
+            .split-panel {
+                width: 100%;
+                min-width: 0;
+                max-width: 100%;
+            }
+            body.split-open main { margin-right: 0; }
+        }
         
         @media print {
             .no-print { display: none !important; }
@@ -390,6 +459,31 @@
         </header>
 
         <main class="max-w-5xl mx-auto p-4 mb-24">
+
+            <!-- ============ SPLIT VIEW PANEL (MODUL AJAR) ============ -->
+            <div id="splitOverlay" class="split-overlay" onclick="closeSplitView()"></div>
+            <div id="splitPanel" class="split-panel no-print">
+                <div class="split-panel-header">
+                    <div class="flex items-center gap-2 min-w-0 flex-1">
+                        <i class="fas fa-file-pdf text-sm flex-shrink-0"></i>
+                        <p class="font-semibold text-sm truncate" id="splitPanelTitle">Modul Ajar</p>
+                    </div>
+                    <div class="flex items-center gap-1 flex-shrink-0">
+                        <a id="splitPanelDownload" href="#" download class="bg-white/20 hover:bg-white/30 p-2 rounded-lg text-white transition" title="Unduh">
+                            <i class="fas fa-download text-xs"></i>
+                        </a>
+                        <a id="splitPanelOpenTab" href="#" target="_blank" rel="noopener noreferrer" class="bg-white/20 hover:bg-white/30 p-2 rounded-lg text-white transition" title="Buka di tab baru">
+                            <i class="fas fa-external-link-alt text-xs"></i>
+                        </a>
+                        <button onclick="closeSplitView()" class="bg-white/20 hover:bg-white/30 p-2 rounded-lg text-white transition" title="Tutup (Esc)">
+                            <i class="fas fa-times text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="split-panel-body">
+                    <iframe id="splitPanelIframe" src="" title="Modul Ajar"></iframe>
+                </div>
+            </div>
             
             <div class="flex border-b-2 border-blue-100 mb-5 no-print overflow-x-auto gap-1">
                 <button onclick="switchMainMenu('dashboard')" id="menu-dashboard" class="px-5 py-3 text-sm tab-active whitespace-nowrap transition-all">
@@ -2572,6 +2666,9 @@
             const panel = document.getElementById('modulAjarObserverPanel');
             if (!panel) return;
 
+            // Tutup split view saat ganti guru
+            closeSplitView();
+
             try {
                 const { data, error } = await _supabase
                     .from('modul_ajar')
@@ -2591,18 +2688,28 @@
 
                 panel.innerHTML = `
                     <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-red-100 p-2 rounded-lg">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="bg-red-100 p-2 rounded-lg flex-shrink-0">
                                 <i class="fas fa-file-pdf text-red-600 text-xl"></i>
                             </div>
-                            <div class="text-left">
-                                <p class="text-sm font-semibold text-gray-800">${fileName}</p>
+                            <div class="text-left min-w-0">
+                                <p class="text-sm font-semibold text-gray-800 truncate">${fileName}</p>
                                 <p class="text-xs text-gray-500">Diunggah: ${new Date(data.uploaded_at).toLocaleDateString('id-ID')}</p>
                             </div>
                         </div>
-                        <a href="${fileUrl}" target="_blank" class="btn-primary text-white px-4 py-2 rounded-lg text-xs font-semibold">
-                            <i class="fas fa-download mr-1"></i> Unduh
-                        </a>
+                        <div class="flex gap-2 flex-shrink-0">
+                            <button
+                                id="btnLihatModul"
+                                data-url="${fileUrl}"
+                                data-name="${fileName}"
+                                onclick="toggleLihatModul()"
+                                class="btn-green text-white px-4 py-2 rounded-lg text-xs font-semibold">
+                                <i class="fas fa-eye mr-1"></i> Lihat
+                            </button>
+                            <a href="${fileUrl}" download="${fileName}" class="btn-primary text-white px-4 py-2 rounded-lg text-xs font-semibold">
+                                <i class="fas fa-download mr-1"></i> Unduh
+                            </a>
+                        </div>
                     </div>
                 `;
             } catch (err) {
@@ -2610,6 +2717,107 @@
                 panel.innerHTML = `<p class="text-xs text-red-500">Gagal memuat Modul Ajar.</p>`;
             }
         }
+
+        // ============================================================
+        // SPLIT VIEW — MODUL AJAR (OBSERVER)
+        // ============================================================
+        function isMobileView() {
+            return window.innerWidth < 1024;
+        }
+
+        function isPdfFile(fileName) {
+            return /\.pdf$/i.test(fileName || '');
+        }
+
+        function toggleLihatModul() {
+            const btn = document.getElementById('btnLihatModul');
+            if (!btn) return;
+            const url = btn.dataset.url || '';
+            const name = btn.dataset.name || 'Modul Ajar';
+            const panel = document.getElementById('splitPanel');
+
+            // Kalau panel sudah terbuka → tutup
+            if (panel && panel.classList.contains('open')) {
+                closeSplitView();
+                return;
+            }
+
+            // PDF + laptop → split view
+            if (isPdfFile(name) && !isMobileView()) {
+                openSplitView(url, name);
+            } else {
+                // HP atau bukan PDF → tab baru (fallback)
+                window.open(url, '_blank', 'noopener,noreferrer');
+            }
+        }
+
+        function openSplitView(fileUrl, fileName) {
+            const panel = document.getElementById('splitPanel');
+            const iframe = document.getElementById('splitPanelIframe');
+            const title = document.getElementById('splitPanelTitle');
+            const btnDl = document.getElementById('splitPanelDownload');
+            const btnTab = document.getElementById('splitPanelOpenTab');
+            const overlay = document.getElementById('splitOverlay');
+            const btnLihat = document.getElementById('btnLihatModul');
+
+            if (!panel) return;
+
+            title.textContent = fileName || 'Modul Ajar';
+            btnDl.href = fileUrl;
+            btnDl.download = fileName || 'Modul_Ajar';
+            btnTab.href = fileUrl;
+
+            // Embed PDF. Tambah #toolbar=1 agar ada toolbar PDF viewer
+            iframe.src = fileUrl + '#toolbar=1&navpanes=0&view=FitH';
+
+            panel.classList.add('open');
+            document.body.classList.add('split-open');
+            if (isMobileView()) overlay.classList.add('active');
+
+            // Ubah tombol jadi "Tutup"
+            if (btnLihat) {
+                btnLihat.innerHTML = '<i class="fas fa-times mr-1"></i> Tutup';
+                btnLihat.classList.remove('btn-green');
+                btnLihat.classList.add('btn-orange');
+            }
+        }
+
+        function closeSplitView() {
+            const panel = document.getElementById('splitPanel');
+            const iframe = document.getElementById('splitPanelIframe');
+            const overlay = document.getElementById('splitOverlay');
+            const btnLihat = document.getElementById('btnLihatModul');
+
+            if (!panel || !panel.classList.contains('open')) return;
+
+            panel.classList.remove('open');
+            document.body.classList.remove('split-open');
+            if (overlay) overlay.classList.remove('active');
+
+            // Bersihkan iframe setelah animasi (hemat memori)
+            setTimeout(() => { if (iframe) iframe.src = ''; }, 350);
+
+            // Kembalikan tombol jadi "Lihat"
+            if (btnLihat) {
+                btnLihat.innerHTML = '<i class="fas fa-eye mr-1"></i> Lihat';
+                btnLihat.classList.remove('btn-orange');
+                btnLihat.classList.add('btn-green');
+            }
+        }
+
+        // Tutup panel dengan tombol Esc
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeSplitView();
+        });
+
+        // Auto-tutup kalau resize dari laptop ke HP
+        let _splitResizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(_splitResizeTimer);
+            _splitResizeTimer = setTimeout(() => {
+                if (isMobileView()) closeSplitView();
+            }, 200);
+        });
 
         // ============================================================
         // UPLOAD MODUL AJAR (GURU)
@@ -2641,17 +2849,17 @@
                     .maybeSingle();
 
                 if (existing && existing.file_path) {
-                    await _supabase.storage.from('modul_ajar').remove([existing.file_path]);
+                    await _supabase.storage.from('modul-ajar').remove([existing.file_path]);
                 }
 
                 const { error: uploadError } = await _supabase.storage
-                    .from('modul_ajar')
+                    .from('modul-ajar')
                     .upload(filePath, file, { upsert: true });
 
                 if (uploadError) throw uploadError;
 
                 const { data: urlData } = _supabase.storage
-                    .from('modul_ajar')
+                    .from('modul-ajar')
                     .getPublicUrl(filePath);
 
                 const publicUrl = urlData.publicUrl;
@@ -2746,7 +2954,7 @@
                 if (fetchError) throw fetchError;
 
                 if (fileData && fileData.file_path) {
-                    await _supabase.storage.from('modul_ajar').remove([fileData.file_path]);
+                    await _supabase.storage.from('modul-ajar').remove([fileData.file_path]);
                 }
 
                 const { error: deleteError } = await _supabase
